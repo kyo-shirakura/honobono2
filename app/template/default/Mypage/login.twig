@@ -26,9 +26,11 @@ file that was distributed with this source code.
                         {% endfor %}
                     {% endif %}
                     <div class="ec-login">
+{#
                         <div class="ec-login__icon">
                             <div class="ec-icon"><img src="{{ asset('assets/icon/user.svg') }}" alt=""></div>
                         </div>
+#}
                         <div class="ec-login__input">
                             <div class="ec-input">
                                 {{ form_widget(form.login_email, {'attr': {'style' : 'ime-mode: disabled;', 'placeholder' : 'common.mail_address', 'autofocus': true}}) }}
@@ -63,9 +65,11 @@ file that was distributed with this source code.
                                 <div class="ec-login__link"><a class="ec-link"
                                                                href="{{ url('forgot') }}">{{ 'common.forgot_login'|trans }}</a>
                                 </div>
+{#
                                 <div class="ec-login__link"><a class="ec-link"
                                                                href="{{ url('entry') }}">{{ 'common.signup'|trans }}</a>
                                 </div>
+#}
                             </div>
                         </div>
                     </div>
