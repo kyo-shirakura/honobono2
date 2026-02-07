@@ -1,0 +1,335 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['business', 'business_edit'] %}
+
+{% block title %}{{ 'admin.business.registration'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.business.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css', 'admin') }}">
+    <style type="text/css">
+        div.form-multi, .flexview {
+            display: flex;
+        }
+        .flexview > span.bef {
+            padding-right: 10px;
+        }
+        .flexview > span.aft {
+            padding-left: 10px;
+        }
+        .input-extension {
+            display: -webkit-box;
+        }
+        div.form-check {
+            padding-right: 15px;
+        }
+        .w100 {
+            width: 100px;
+        }
+        .input-weekly > * {
+            margin-left: 10px;
+        }
+        .input-weekly input {
+            margin-right: 10px;
+        }
+        .input-regular_type > div > label {
+            width: max-content;
+        }
+        .form-check-input[type=checkbox] {
+            padding: 0.5em;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+
+    <!-- select2 -->
+    <script src="/html/template/admin/assets/js/jquery-3.5.1.js"></script>
+    <script src="/html/template/admin/assets/js/select2.min.js"></script>
+
+    <script>
+        $(function() {
+            // スタッフ名のサジェスト化
+            $('#admin_search_business_Customer').select2();
+            $('#admin_search_business_Staff').select2();
+        });
+
+    </script>
+
+{% endblock javascript %}
+
+{% block main %}
+    <form name="business_form" role="form" id="business_form" method="post" class="h-adr"
+          action="{%- if BusinessStaff.id %}{{ url('admin_business_staff_edit', { bid : Business.id, id : BusinessStaff.id }) }}{% else %}{{ url('admin_business_staff_new', { bid : Business.id} ) }}{% endif -%}"
+          novalidate>
+        <span class="p-country-name" style="display:none;">Japan</span>
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.business.info'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.name'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ Business.name }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.customer'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ Business.Customer }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.contractor'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ Business.contractor_id is empty ? '' : BusinessConstractors[Business.contractor_id] }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.kind'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ Business.kind_id  is empty ? '' : BusinessKinds[Business.kind_id] }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.status'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ Business.status }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- スタッフ情報 -->
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.business.info.staff'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <a data-toggle="collapse" href="#ordererInfo"
+                                       aria-expanded="false" aria-controls="ordererInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.staff'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.Staff) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.status'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.status) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.period_start'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.period_start, { type : 'date' }) }}
+                                        {{ form_errors(form.period_start) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.period_end'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.period_end, { type : 'date' }) }}
+                                        {{ form_errors(form.period_end) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.regular_type'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.regular_type, {'attr': {'class': 'form-multi input-regular_type'}}) }}
+                                        {{ form_errors(form.regular_type) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.regular_week_no'|trans }}</span>
+                                    </div>
+                                    <div class="col-3 flexview">
+                                        <span class='bef'>第</span>
+                                        {{ form_widget(form.week_no, {'attr': {'class': 'w100'}}) }}
+                                        <span class='aft'>週</span>
+                                        {{ form_errors(form.week_no) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.regular_day_of_week'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+
+                                    {% for dayweek in BusinessStaffWorkingTime %}
+                                        {% set week_no = loop.index %}
+                                        <div class="form-check form-multi input-weekly">
+                                            <input type="checkbox" id="admin_search_business_day_of_week_{{ week_no }}" name="admin_search_business[day_of_week][]" class="form-check-input" value="{{ week_no }}" {% if dayweek.day_of_week != null %}checked{% endif %}>
+                                            {{ BusinessWeekly[loop.index] }}
+                                            <input type="time" id="admin_search_business_day_of_week_{{ week_no }}_working_time_start" name="admin_search_business[working_time_start][]" class="form-control" value="{% if dayweek.day_of_week != null %}{{ dayweek.working_time_start }}{% endif %}">
+                                            <span>〜</span>
+                                            <input type="time" id="admin_search_business_day_of_week_{{ week_no }}_working_time_end" name="admin_search_business[working_time_end][]" class="form-control" value="{% if dayweek.day_of_week != null %}{{ dayweek.working_time_end }}{% endif %}">
+                                        </div>
+                                    {% endfor %}
+{#
+                                    {% for key, value in BusinessWeekly %}
+                                        <div class="form-check form-multi input-weekly">
+                                            <input type="checkbox" id="admin_search_business_day_of_week_{{ key }}" name="admin_search_business[day_of_week]" class="form-check-input" value="{{ key }}">
+                                            {{ value }}
+                                            <input type="time" id="admin_search_business_day_of_week_{{ key }}_working_time_start" name="admin_search_business[working_time_start]" class="form-control">
+                                            <span>〜</span>
+                                            <input type="time" id="admin_search_business_day_of_week_{{ key }}_working_time_end" name="admin_search_business[working_time_end]" class="form-control">
+                                        </div>
+                                    {% endfor %}
+#}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.fare'|trans }}</span>
+                                    </div>
+                                    <div class="col-3 input-extension">
+                                        {{ form_widget(form.fare) }} {{ 'admin.common.en'|trans }}
+                                        {{ form_errors(form.fare) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.access'|trans }}</span>
+                                    </div>
+                                    <div class="col-6 input-extension">
+                                        {{ form_widget(form.access, { attr:{ 'rows':6 }}) }}
+                                        {{ form_errors(form.access) }}
+                                    </div>
+                                </div>
+
+                                {# エンティティ拡張の自動出力 #}
+{#
+                                {% for f in form|filter(f => f.vars.eccube_form_options.auto_render) %}
+                                    {% if f.vars.eccube_form_options.form_theme %}
+                                        {% form_theme f f.vars.eccube_form_options.form_theme %}
+                                        {{ form_row(f) }}
+                                    {% else %}
+                                        <div class="row mb-2">
+                                            <div class="col-3">
+                                                <span>{{ f.vars.label|trans }}</span>
+                                            </div>
+                                            <div class="col">
+                                                {{ form_widget(f) }}
+                                                {{ form_errors(f) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+#}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if Business.id %}
+<!--
+                        <div class="card rounded border-0 mb-4">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="d-inline-block" data-tooltip="true" data-placement="top"
+                                             title="{{ 'tooltip.business.address'|trans }}">
+                                        <span class="card-title">
+                                            {{ 'admin.business.address'|trans }}
+
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <a data-toggle="collapse" href="#delivery" aria-expanded="false"
+                                           aria-controls="delivery">
+                                            <i class="fa fa-angle-up fa-lg"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+-->
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_business_page', { page_no : app.session.get('eccube.admin.business.search.page_no')|default('1') } ) }}?resume=1">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'admin.business.list'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h4>{{ Staff.name01 }}さん、おつかれさまです。</h4>
+            <h1>{{ 'front.report.registration'|trans }}</h1>
+        </div>
+        <div class="ec-off2Grid">
+            <div class="ec-off2Grid__cell">
+                <div>{{ 'front.staff.report.no.contract'|trans }}</div>
+                <div>{{ 'front.staff.report.office.contact'|trans }}</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

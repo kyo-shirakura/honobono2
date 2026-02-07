@@ -1,0 +1,260 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['invoice', 'invoice_old_master'] %}
+
+{% block title %}{{ 'admin.invoice.list'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.invoice.management'|trans }}{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css', 'admin') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+
+    <style type="text/css">
+        .datepicker-days th.dow:first-child,
+        .datepicker-days td:first-child {
+            color: #f00;
+        }
+
+        .datepicker-days th.dow:last-child,
+        .datepicker-days td:last-child {
+            color: #00f;
+        }
+        .image_size_s{
+            height: 25px;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}"></script>
+
+    <!-- select2 -->
+    <script src="/html/template/admin/assets/js/jquery-3.5.1.js"></script>
+    <script src="/html/template/admin/assets/js/select2.min.js"></script>
+
+    <script>
+        $(function() {
+
+            // スタッフ名のサジェスト化
+            $('#admin_search_invoice_Customer').select2();
+
+            // datetimepicker で value が消えてしまうので data-value に保持しておく
+            $('input.datetimepicker-input').each(function() {
+                $(this).data('value', $(this).val());
+            });
+
+            $('input.datetimepicker-input').datetimepicker({
+                locale: '{{ eccube_config.locale }}',
+                format: 'YYYY-MM-DD HH:mm:ss',
+                useCurrent: false,
+                buttons: {
+                    showToday: true,
+                    showClose: true
+                },
+            });
+
+            // datetimepicker で value が消えてしまうので更新
+            $('input.datetimepicker-input').each(function() {
+                $(this).val($(this).data('value'));
+            });
+
+            toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+            $('input[id^="check_"]').on('change', function() {
+                $('#toggle_check_all').prop('checked', false);
+                toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+            });
+
+            // 登録チェックボックス
+            $('#toggle_check_all').on('change', function() {
+                var checked = $(this).prop('checked');
+                if (checked) {
+                    $('input[id^="check_"]').prop('checked', true);
+                } else {
+                    $('input[id^="check_"]').prop('checked', false);
+                }
+                toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+            });
+
+            $('button.update_tracking_number').prop('disabled', true);
+            // フォームに変更があったら更新ボタンを有効にする
+            $('input.update_tracking_number').on('keyup', function(event) {
+                var $tracking_number = $(this);
+                var $button = $("button[data-target='#" + $tracking_number.attr('id') + "']");
+                $button.prop('disabled', false);
+                $button.children('i')
+                    .removeClass('text-secondary')
+                    .addClass('text-success');
+            });
+            // enter キーで更新し、次のフォームへフォーカスを移動する
+            $('input.update_tracking_number').on('keypress', function(event) {
+                var $tracking_number = $(this);
+                var $button = $("button[data-target='#" + $tracking_number.attr('id') + "']");
+
+                var code = event.which ? event.which : event.keyCode;
+
+                if (code == 13) { // on press to enter
+                    var index = $('input.update_tracking_number').index(this);
+                    var callback = function() {
+                        $button.prop('disabled', true);
+                        $button.children('i')
+                            .removeClass('text-success')
+                            .addClass('text-secondary');
+                        $('input.update_tracking_number:gt(' + index + '):first').focus();
+                    };
+                    updateTrackingNumber($tracking_number.data('shipping_id'), $tracking_number.data('url'), $tracking_number.val(), callback);
+                    event.preventDefault();
+                }
+            });
+            // 更新ボタンの制御
+            $('button.update_tracking_number').on('click', function(event) {
+                event.preventDefault();
+                var $button = $(this);
+                var $target = $($(this).data('target'));
+                var tracking_number = $target.val();
+                var callback = function() {
+                    $button.prop('disabled', true);
+                    $button.children('i')
+                        .removeClass('text-success')
+                        .addClass('text-secondary');
+                };
+
+                updateTrackingNumber($target.data('shipping_id'), $target.data('url'), tracking_number, callback);
+            });
+
+            // 完了ボタン
+            $('#bulkChangeComplete').on('click', function() {
+                location.href = '{{ url('admin_invoice', { 'resume': 1 }) }}';
+            });
+
+        });
+    </script>
+
+{% endblock javascript %}
+
+{% block main %}
+    <!--検索条件設定テーブルここから-->
+    <div class="c-outsideBlock">
+        <form name="search_form" id="search_form" method="POST" action="{{ url('admin_invoice') }}">
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    {{ form_widget(searchForm._token) }}
+                    <div class="col-3">
+                        <div>
+                            <label class="col-form-label">{{ 'admin.customer.name'|trans }}</label>
+
+                            <select id="admin_search_invoice_Customer" name="admin_search_invoice[Customer]" class="form-select">
+                                <option value="">選択してください</option>
+                                {% for Customer in Customers %}
+                                        <option value="{{ Customer.id }}"
+                                        {% if Customer.id == searchCustomerID %} selected{% endif %}
+                                        >{{ Customer.name01 }} {{ Customer.name02 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div>
+                            <label class="col-form-label">{{ 'admin.invoice.issue_ym'|trans }}</label>
+                            {{ form_widget(searchForm.issue_ym) }}
+                            {{ form_errors(searchForm.issue_ym) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-inline-block mb-3 collapsed" data-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail">
+                </div>
+            </div>
+
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    <div class="mb-4">
+                        <div class="col-12">
+                            <button class="btn btn-ec-conversion px-5" type="submit" id="search_submit">{{ 'admin.common.search'|trans }}</button>
+                            {% if pagination %}
+                                <span class="font-weight-bold ml-2" id="search_total_count">{{ 'admin.common.search_result'|trans({"%count%":pagination.totalItemCount})|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--
+            <div class="c-outsideBlock__contents mb-5">
+                {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
+            </div>
+-->
+        </form>
+    </div>
+    <!--検索条件設定テーブルここまで-->
+
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                {% if pagination and pagination.totalItemCount %}
+
+                    <div class="card rounded binvoice-0 mb-4 d-block">
+                        <div class="card-body p-0">
+                            <table class="table table-sm" id="search_result">
+                                <thead>
+                                <tr>
+                                <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.issue_ym'|trans }}</th>
+                                    <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.customer'|trans }}</th>
+                                    <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.pdf_file'|trans }}</th>
+                                    <th class="binvoice-top-0 pt-2 pb-2 text-center pr-3"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for invoice in pagination %}
+                                    <tr>
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                            {{ invoice.issue_ym|date('Y年m月') }}
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            <a class="action-edit" href="{{ url('admin_customer_edit', { id : invoice.Customer.id }) }}">{{ invoice.Customer.name01 }} {{ invoice.Customer.name02 }}</a>
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                            <a class="action-edit" href="{{ asset(invoice.pdf_file, 'save_image') }}" target=_blank>ファイルを確認する</a>
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                            <a class="action-edit" href="{{ url('admin_invoice_edit', { id : invoice.id }) }}">変更する</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-md-center mb-4"></div>
+                        </div>
+                        <div class="row justify-content-md-center mb-4">
+                            {% if pagination.totalItemCount > 0 %}
+                                {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_invoice_page' } %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card rounded binvoice-0">
+                        <div class="card-body p-4">
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

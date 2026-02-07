@@ -1,0 +1,208 @@
+parameters:
+    eccube_nav:
+        business:
+            name: admin.business.management
+            icon: fa-users
+            children:
+                business_master:
+                    name: admin.business.list
+                    url: admin_business
+                business_edit:
+                    name: admin.business.registration
+                    url: admin_business_new
+        customer:
+            name: admin.customer.customer_management
+            icon: fa-user-circle
+            children:
+                customer_master:
+                    name: admin.customer.customer_list
+                    url: admin_customer
+                customer_edit:
+                    name: admin.customer.customer_registration
+                    url: admin_customer_new
+        staff:
+            name: admin.staff.management
+            icon: fa-user-circle
+            children:
+                staff_master:
+                    name: admin.staff.list
+                    url: admin_staff
+                staff_edit:
+                    name: admin.staff.registration
+                    url: admin_staff_new
+        report:
+            name: admin.report.management
+            icon: fa-file-text-o
+            children:
+                report_master:
+                    name: admin.report.list
+                    url: admin_report
+                report_edit:
+                    name: admin.report.registration
+                    url: admin_report_new
+                report_cancel:
+                    name: admin.report.cancel
+                    url: admin_report_cancel
+        invoice:
+            name: admin.invoice.management
+            icon: fa-file-text-o
+            children:
+                invoice_master:
+                    name: admin.invoice.issue.list
+                    url: admin_invoice_issued
+                invoice_issue:
+                    name: admin.invoice.issue
+                    url: admin_invoice_issue
+                invoice_reissue:
+                    name: admin.invoice.reissue
+                    url: admin_invoice_reissue
+                invoice_old_master:
+                    name: admin.invoice.list
+                    url: admin_invoice
+                invoice_edit:
+                    name: admin.invoice.registration
+                    url: admin_invoice_new
+        payslip:
+            name: admin.payslip.management
+            icon: fa-file-text-o
+            children:
+                payslip_master:
+                    name: admin.payslip.list
+                    url: admin_payslip
+                payslip_edit:
+                    name: admin.payslip.registration
+                    url: admin_payslip_new
+                payslip_issue:
+                    name: admin.payslip.issue
+                    url: admin_payslip_issue
+        business_plan:
+            name: admin.business_plan.management
+            icon: fa-cog
+            children:
+                config_master:
+                    name: admin.business_plan.list
+                    url: admin_business_plan
+                config_edit:
+                    name: admin.business_plan.registration
+                    url: admin_business_plan_new
+                config_cancel:
+                    name: admin.business_plan.cancel
+                    url: admin_business_plan_cancel
+        content:
+            name: admin.content.contents_management
+            icon: fa-file-text-o
+            children:
+                news:
+                    name: admin.content.news_management
+                    url : admin_content_news
+                file:
+                    name: admin.content.file_management
+                    url: admin_content_file
+                layout:
+                    name: admin.content.layout_management
+                    url: admin_content_layout
+                page:
+                    name: admin.content.page_management
+                    url: admin_content_page
+                css:
+                    name: admin.content.css_management
+                    url: admin_content_css
+                js:
+                    name: admin.content.js_management
+                    url: admin_content_js
+                block:
+                    name: admin.content.block_management
+                    url: admin_content_block
+                cache:
+                    name: admin.content.cache_management
+                    url: admin_content_cache
+                maintenance:
+                    name: admin.content.maintenance_management
+                    url: admin_content_maintenance
+        setting:
+            name: admin.setting
+            icon: fa-cog
+            children:
+                shop:
+                    name: admin.setting.shop
+                    children:
+                        shop_index:
+                            name: admin.setting.shop.shop_setting
+                            url: admin_setting_shop
+                        shop_tradelaw:
+                            name: admin.setting.shop.tradelaw_setting
+                            url: admin_setting_shop_tradelaw
+                        shop_agreement:
+                            name: admin.setting.shop.agreement_setting
+                            url: admin_content_page_edit
+                            param: { id: !php/const Eccube\Entity\Page::AGREEMENT_PAGE_ID, return: agreement }
+                        shop_payment:
+                            name: admin.setting.shop.payment_setting
+                            url: admin_setting_shop_payment
+                        shop_delivery:
+                            name: admin.setting.shop.delivery_setting
+                            url: admin_setting_shop_delivery
+                        shop_tax:
+                            name: admin.setting.shop.tax_setting
+                            url: admin_setting_shop_tax
+                        shop_mail:
+                            name: admin.setting.shop.mail_setting
+                            url: admin_setting_shop_mail
+                        shop_csv:
+                            name: admin.setting.shop.csv_setting
+                            url: admin_setting_shop_csv
+                        shop_order_status:
+                            name: admin.setting.shop.order_status_setting
+                            url: admin_setting_shop_order_status
+                        shop_calendar:
+                            name: admin.setting.shop.calendar_setting
+                            url: admin_setting_shop_calendar
+                system:
+                    name: admin.setting.system
+                    children:
+                        member:
+                            name: admin.setting.system.member_management
+                            url: admin_setting_system_member
+                        authority:
+                            name: admin.setting.system.authority_management
+                            url: admin_setting_system_authority
+                        security:
+                            name: admin.setting.system.security_management
+                            url: admin_setting_system_security
+                        login_history:
+                            name: admin.setting.system.login_history
+                            url: admin_setting_system_login_history
+                        log:
+                            name: admin.setting.system.log_display
+                            url: admin_setting_system_log
+                        masterdata:
+                            name: admin.setting.system.master_data_management
+                            url: admin_setting_system_masterdata
+                        system_index:
+                            name: admin.setting.system.system_info
+                            url: admin_setting_system_system
+        store:
+            name: admin.store
+            icon: fa-plug
+            children:
+                plugin:
+                    name: admin.store.plugin
+                    children:
+                        plugin_owners_search:
+                            name: admin.store.plugin.plugin_owners_install
+                            url: admin_store_plugin_owners_search
+                        plugin_list:
+                            name: admin.store.plugin.plugin_list
+                            url: admin_store_plugin
+                template:
+                    name: admin.store.template
+                    children:
+                        template_list:
+                            name: admin.store.template.template_list
+                            url: admin_store_template
+                        template_install:
+                            name: admin.store.template.template_install
+                            url: admin_store_template_install
+                authentication_setting:
+                    name: admin.store.setting
+                    url: admin_store_authentication_setting

@@ -1,0 +1,303 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['invoice', 'invoice_issue_edit'] %}
+
+{% block title %}{{ 'admin.invoice.issue'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.invoice.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        table > thead > * {
+            text-align: center;
+        }
+        th {
+            border-right: 1px solid #ddd;
+        }
+        .valign-middle{
+            vertical-align: middle;
+        }
+        .align-right{
+            text-align: right;
+        }
+        .align-center{
+            text-align: center;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}"></script>
+
+    <script>
+        // 合計金額
+        $(document).ready(function() {
+            var total = $('#amount_total').val();
+            $('#amount_total_view').text( Number(total).toLocaleString() );
+        });
+        // 確認
+        $('#issue_go').click(function(){
+            if(!confirm('請求書を発行してもよろしいですか？')){
+                /*　キャンセル */
+                return false;
+            }else{
+                /* OK */
+                $('#issue_form').submit();
+            }
+        });
+    </script>
+
+{% endblock javascript %}
+
+
+{% block main %}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <h4 class="box-title fw-bold">{{ date('now') | date_modify('-1 month') | date('Y年m')}}{{ 'admin.invoice.output_delivery_note'|trans }}</h4>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h4 class="fw-bold">{{ Customer.name01 }} {{ Customer.name02 }} 様</h4>
+                            </div>
+
+                            <div class="mb-3">
+                                <h5 class="fw-bold">{{ date('now') | date_modify('-1 month') | date('m')}}月分ご請求書: <span id='amount_total_view'></span>円</h5>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.invoice.delivery_note_create_date'|trans }}</label>
+                                {{ form_widget(form.issue_ym) }}
+                                {{ form_errors(form.issue_ym) }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.reports'|trans }}</label>
+                                <form target='_blank' name="report_view_form" id="report_view_form" method="POST" action="{{ url('admin_report') }}">
+                                    <input type="hidden" id="admin_search_report__token" name="admin_search_report[_token]" value="{{ AdminReportFormToken }}">
+                                    <input type='hidden' name='admin_search_report[Customer]' id='admin_search_report_Customer' value='1' />
+                                    <input type='hidden' name='admin_search_report[working_ym]' id='admin_search_report_working_ym' value='{{ 'now'|date_modify('-1 month')|date('Y-m') }}' />
+                                    <button class="btn btn-ec-conversion px-5 ladda-button" type="submit" id="search_submit" data-style="expand-right">
+                                        <span class="ladda-label">{{ 'admin.invoice.report.link'|trans }}</span>
+                                        <span class="ladda-spinner"></span>
+                                    </button>
+                                </form>
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.invoice.detail.no'|trans }}</th>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.invoice.detail.business.type'|trans }}</th>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.invoice.detail.date'|trans }}</th>
+                                            <th colspan=6>{{ 'admin.invoice.detail.working'|trans }}</th>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.invoice.detail.staff'|trans }}</th>
+                                            <th colspan=5>{{ 'admin.invoice.detail.amout'|trans }}</th>
+
+                                        </tr>
+                                        <tr>
+                                            <th colspan=3>{{ 'admin.invoice.detail.working.time'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.working.break'|trans }}</th>
+                                            <th colspan=2>{{ 'admin.invoice.detail.working.total'|trans }}{{ 'admin.invoice.detail.working.breakdown'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.basic'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.overtime'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.advance'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.fare'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.total'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set total = 0 %}
+                                    {% for row in Report %}
+                                        {% set result = get_report_breakdown( row ) %}
+                                        {% set total = total + result.amout.total %}
+                                        <tr>
+                                            <td><a target=_blank href="{{ url('admin_report_edit', { id : row.id }) }}">{{ row.id }}</a></td>
+                                            <td>{{ BusinessKinds[ result.plan.kind ] }}
+                                            </td>
+                                            <td>{{ row.working_day }}</td>
+                                            <td class='align-center'>{{ row.working_time_start }}</td> <td class='align-center'>-</td> <td class='align-center'>{{ row.working_time_end }}</td>
+                                            <td class='align-center'>{{ row.working_time_break }}</td>
+                                            <td class='align-right'>
+                                                {{ result.working.total }}
+                                            </td>
+                                            <td class='align-center'>
+                                                （{{ result.working.basic }}｜{{ result.working.overtime }}）
+                                            </td>
+                                            <td>{{ row.Staff.name01 }}</td>
+                                            <td class='align-right'>{{ result.amout.basic is empty ? '-' : result.amout.basic ~ '円' }}</td>
+                                            <td class='align-right'>{{ result.amout.overtime is empty ? '-' : result.amout.overtime ~ '円' }}</td>
+                                            <td class='align-right'>{{ row.payment_advance is empty ? '-' : row.payment_advance ~ '円' }}</td>
+                                            <td class='align-right'>{{ row.fare is empty ? '-' : row.fare ~ '円' }}</td>
+                                            <td class='align-right'>{{ result.amout.total is empty ? '-' : result.amout.total ~ '円' }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <input type='hidden' id='amount_total' value='{{ total }}' />
+
+                            <!-- ◆ 交通費 -->
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.fare'|trans }}</label>
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'admin.invoice.detail.staff'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.amout.fare'|trans }}</th>
+                                            <th>{{ 'admin.invoice.detail.access'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in BusinessStaff %}
+                                        <tr>
+                                            <td>{{ row.Staff.name01 }}</td>
+                                            <td class='align-right'>{{ row.fare is empty ? '-' : row.fare ~ '円' }}</td>
+                                            <td>{{ row.access }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <form name="issue_form" id="issue_form" method="POST" action="{{ url('admin_invoice_issue_issued', { id : Customer.id }) }}">
+                                <input type='hidden' id='mode' value='issue' />
+                                <!-- ◆ 追加明細 -->
+                                <div class="mb-3">
+                                    <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.additem'|trans }}</label>
+                                    <table class="table table-sm" id="search_result">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ 'admin.invoice.additem.title'|trans }}</th>
+                                                <th>{{ 'admin.invoice.additem.amout'|trans }}</th>
+                                                <th>{{ 'admin.invoice.additem.remark'|trans }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ form_widget(form.item_title) }}</td>
+                                                <td class='align-right'>{{ form_widget(form.item_amout) }}</td>
+                                                <td>{{ form_widget(form.item_remark) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <select id="invoice_issue_item_title" name="invoice_issue[item_title]" required="required" class="form-select"><option value="" selected="selected">選択してください</option><option value="1">杉並子育て応援券（アプリ）</option><option value="2">杉並子育て応援券（紙）</option><option value="3">クーポン利用</option><option value="4">お値引き</option><option value="5">その他</option></select>
+                                                </td>
+                                                <td class="align-right">
+                                                    <input type="text" id="invoice_issue_item_amout" name="invoice_issue[item_amout]" maxlength="255" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="invoice_issue_item_remark" name="invoice_issue[item_remark]" maxlength="255" class="form-control">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <select id="invoice_issue_item_title" name="invoice_issue[item_title]" required="required" class="form-select">
+                                                        <option value="" selected="selected">選択してください</option>
+                                                        <option value="1">杉並子育て応援券（アプリ）</option>
+                                                        <option value="2">杉並子育て応援券（紙）</option>
+                                                        <option value="3">クーポン利用</option>
+                                                        <option value="4">お値引き</option>
+                                                        <option value="5">その他</option>
+                                                    </select>
+                                                </td>
+                                                <td class="align-right">
+                                                    <input type="text" id="invoice_issue_item_amout" name="invoice_issue[item_amout]" maxlength="255" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="invoice_issue_item_remark" name="invoice_issue[item_remark]" maxlength="255" class="form-control">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <select id="invoice_issue_item_title" name="invoice_issue[item_title]" required="required" class="form-select">
+                                                        <option value="" selected="selected">選択してください</option>
+                                                        <option value="1">杉並子育て応援券（アプリ）</option>
+                                                        <option value="2">杉並子育て応援券（紙）</option>
+                                                        <option value="3">クーポン利用</option>
+                                                        <option value="4">お値引き</option>
+                                                        <option value="5">その他</option>
+                                                    </select>
+                                                </td>
+                                                <td class="align-right">
+                                                    <input type="text" id="invoice_issue_item_amout" name="invoice_issue[item_amout]" maxlength="255" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="invoice_issue_item_remark" name="invoice_issue[item_remark]" maxlength="255" class="form-control">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <select id="invoice_issue_item_title" name="invoice_issue[item_title]" required="required" class="form-select">
+                                                        <option value="" selected="selected">選択してください</option>
+                                                        <option value="1">杉並子育て応援券（アプリ）</option>
+                                                        <option value="2">杉並子育て応援券（紙）</option>
+                                                        <option value="3">クーポン利用</option>
+                                                        <option value="4">お値引き</option>
+                                                        <option value="5">その他</option>
+                                                    </select>
+                                                </td>
+                                                <td class="align-right">
+                                                    <input type="text" id="invoice_issue_item_amout" name="invoice_issue[item_amout]" maxlength="255" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="invoice_issue_item_remark" name="invoice_issue[item_remark]" maxlength="255" class="form-control">
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                <div class="fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.note_message'|trans }}</div>
+
+                                <div class="mb-3">
+                                    {{ form_widget(form.message, { attr:{ 'rows':6 }}) }}
+                                    {{ form_errors(form.message) }}
+                                </div>
+
+                                <div class="fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.note_remark'|trans }}</div>
+                                <div class="mb-3">
+                                    {{ form_widget(form.remark, { attr:{ 'rows':6 }}) }}
+                                    {{ form_errors(form.remark) }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <button class="btn btn-ec-regular px-5" type="button">{{ 'admin.common.close'|trans }}</button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button id="issue_go" class="btn btn-ec-conversion px-5" type="submit">{{ 'admin.common.issue'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

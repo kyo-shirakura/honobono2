@@ -1,0 +1,335 @@
+#------------------------------------------------------------------------------------
+# 共通
+#------------------------------------------------------------------------------------
+common.system.title: 【ほのぼのビジョン】システム
+common.menu.title: さん、おつかれさまです
+#------------------------------------------------------------------------------------
+# 管理画面のみ
+#------------------------------------------------------------------------------------
+admin.common.registration.update: 更新
+admin.common.registration.placeholder: 選択してください
+admin.common.select.placeholder: 選択してください
+admin.common.drag_and_drop_pdf_description: PDFアップロード
+admin.common.trash: 削除
+admin.common.issue: 発行
+admin.common.trash.message: 削除してもよろしいですか？
+admin.common.en: 円
+admin.common.mark: ◆
+admin.common.percent: ％
+
+#------------------------------------------------------------------------------------
+# 顧客管理
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.customer.customer_management: 顧客管理
+admin.customer.customer_list: 顧客一覧
+admin.customer.customer_registration: 顧客登録
+
+admin.customer.management: 顧客管理
+admin.customer.list: 顧客一覧
+admin.customer.registration: 顧客登録
+admin.customer.csv_list: 顧客CSV一覧
+admin.customer.csv_upload: 顧客CSV登録
+# 検索
+admin.customer.search.name: 顧客名
+admin.customer.search.tel: 電話番号
+admin.customer.search.email: メールアドレス
+admin.customer.search.status: ステータス
+# 項目
+admin.customer.info: 顧客情報
+admin.customer.id: ID
+admin.customer.name: 顧客名
+admin.customer.kana: 顧客名（かな）
+admin.customer.tel: 電話番号
+admin.customer.email: メールアドレス
+admin.customer.zip: 郵便番号
+admin.customer.payment_type: 支払方法
+admin.customer.transferee_account: 振替先口座
+admin.customer.pref: 都道府県
+admin.customer.city: 市区郡
+admin.customer.address: 町名・番地
+admin.customer.access: アクセス
+admin.customer.remark: メモ
+admin.customer.status: ステータス
+admin.customer.invoice_history: 請求書履歴
+admin.customer.no_history: この顧客の請求書履歴がありません
+# リライト
+admin.common.shop_memo: 本部用メモ欄
+admin.product.product_csv.shop_memo_col: 本部用メモ欄
+
+
+#------------------------------------------------------------------------------------
+# スタッフ管理
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.staff.management: スタッフ管理
+admin.staff.list: スタッフ一覧
+admin.staff.registration: スタッフ登録
+admin.staff.csv_list: スタッフCSV一覧
+admin.staff.csv_upload: スタッフCSV登録
+# 検索
+admin.staff.search.name: スタッフ名
+admin.staff.search.tel: 電話番号
+admin.staff.search.email: メールアドレス
+admin.staff.search.status: ステータス
+# 項目
+admin.staff.info: スタッフ情報
+admin.staff.id: ID
+admin.staff.name: スタッフ名
+admin.staff.kana: スタッフ名（かな）
+admin.staff.sex: 性別
+admin.staff.birth: 誕生日
+admin.staff.phone_number: 電話番号
+admin.staff.email: メールアドレス
+admin.staff.postal_code: 郵便番号
+admin.staff.address: 住所
+admin.staff.access: アクセス
+admin.staff.remark: メモ
+admin.staff.transferee_account: 振込先口座
+admin.staff.status: ステータス
+admin.staff.note: 本部用メモ欄
+admin.staff.payslip_history: 給与明細履歴
+admin.staff.no_history: このスタッフの給与明細履歴がありません
+
+#------------------------------------------------------------------------------------
+# 案件管理
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.business.management: 案件管理
+admin.business.list: 案件一覧
+admin.business.registration: 案件登録
+admin.business.csv_list: 案件CSV一覧
+admin.business.csv_upload: 案件CSV登録
+# 項目
+admin.business.info: 案件情報
+admin.business.info.staff: 案件契約スタッフ情報
+admin.business.id: ID
+admin.business.name: 案件名
+admin.business.status: ステータス
+admin.business.customer: 顧客名
+admin.business.staff: スタッフ名
+admin.business.contractor: 契約対象
+admin.business.kind: 契約種類
+admin.business.invoice.sender.type: 請求書の送付先
+
+admin.business.period.title: 契約期間
+admin.business.period_start: 契約期間（開始日）
+admin.business.period_end: 契約期間（終了日）
+admin.business.regular_type: 頻度
+admin.business.regular_week_no: 週数
+admin.business.regular_day_of_week: 曜日
+admin.business.fare: 交通費
+admin.business.access: 交通経路
+
+admin.business.period_start.blank: ___ / __ / __
+admin.business.period_end.blank: ___ / __ / __
+
+admin.business.add_staff.first: スタッフが登録されていません
+admin.business.add_staff.first.message: スタッフの追加ボタンをクリックして、担当スタッフを登録してください
+
+admin.business.invoice.sender.name: お名前
+admin.business.invoice.sender.postal_code: 郵便番号
+admin.business.invoice.sender.addr01: 都道府県市区町村
+admin.business.invoice.sender.addr02: 番地（マンション名）
+admin.business.invoice.sender.phone_number: 電話番号
+
+#------------------------------------------------------------------------------------
+# 業務報告管理
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.report.management: 業務報告管理
+admin.report.list: 業務報告一覧
+admin.report.registration: 業務報告登録
+admin.report.cancel: キャンセル登録
+# 検索
+admin.report.working_ym: 作業年月
+# 項目
+admin.report.info: 業務報告情報
+admin.report.id: ID
+admin.report.customer: 顧客名
+admin.report.staff: スタッフ名
+admin.report.business: 契約案件
+admin.report.working_day: 作業日
+admin.report.working_time_start: 開始時間
+admin.report.working_time_end: 終了時間
+admin.report.working_time_break: 休憩時間
+admin.report.working_time_total: 合計作業時間
+admin.report.work_details: 作業内容
+admin.report.work_other: その他
+admin.report.safety_confirmation: 安全確認
+admin.report.payment: 金額記入欄（買い物など）
+admin.report.payment_deposit: 預かり代金
+admin.report.payment_advance: 立替金（買い物代金）
+admin.report.payment_change: おつり
+admin.report.payment_receipt: レシート
+admin.report.remark: 備考・連絡事項
+admin.report.status: ステータス
+admin.report.cancel.kind: キャンセル種別
+admin.report.fare: 交通費
+
+
+#------------------------------------------------------------------------------------
+# 請求書
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.invoice.management: 請求書
+admin.invoice.issue.list: 請求一覧
+admin.invoice.issue: 請求書発行
+admin.invoice.reissue: 請求書再発行
+admin.invoice.list: 【旧】請求書一覧
+admin.invoice.registration: 【旧】請求書登録
+admin.invoice.issue.check: 内容を確認する
+admin.invoice.issue.do: 発行する
+admin.invoice.reissue.do: 再発行する
+admin.invoice.report.link: 対象の業務報告を確認する
+
+# 項目
+admin.invoice.info: 請求書情報
+admin.invoice.id: ID
+admin.invoice.customer: 顧客名
+admin.invoice.issue_ym: 発行年月
+admin.invoice.pdf_file: 請求書
+admin.invoice.sendmail.check: 請求書をメール送信する
+
+admin.invoice.output_delivery_note: 月分ご請求書
+admin.invoice.delivery_note_create_date: 発行日
+admin.invoice.reports: 業務報告
+admin.invoice.fare: 交通費
+admin.invoice.additem: 追加明細
+admin.invoice.note_message: メッセージ
+admin.invoice.note_remark: 備考
+
+admin.invoice.detail.no: No
+admin.invoice.detail.date: 日付
+admin.invoice.detail.business.type: 契約
+admin.invoice.detail.working: 作業
+admin.invoice.detail.working.time: 作業時間
+admin.invoice.detail.working.break: 休憩時間
+admin.invoice.detail.working.total: 合計時間
+admin.invoice.detail.working.breakdown: （基本｜時間外）
+admin.invoice.detail.staff: スタッフ
+admin.invoice.detail.amout: 内訳
+admin.invoice.detail.amout.basic: 基本
+admin.invoice.detail.amout.overtime: 時間外割増
+admin.invoice.detail.amout.advance: 立替金
+admin.invoice.detail.amout.fare: 交通費
+admin.invoice.detail.amout.total: 合計（税込）
+admin.invoice.detail.access: アクセス
+admin.invoice.detail.remark: 備考
+
+admin.invoice.additem.title: 名目
+admin.invoice.additem.amout: 金額
+admin.invoice.additem.remark: 備考
+
+#------------------------------------------------------------------------------------
+# 給与明細
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.payslip.management: 給与明細
+admin.payslip.list: 給与明細一覧
+admin.payslip.registration: 給与明細登録
+admin.payslip.issue: 給与明細発行
+admin.payslip.issue.check: 内容を確認する
+admin.payslip.issue.do: 発行する
+admin.payslip.report.link: 対象の業務報告を確認する
+# 項目
+admin.payslip.info: 給与明細情報
+admin.payslip.id: ID
+admin.payslip.staff: スタッフ名
+admin.payslip.issue_ym: 発行年月
+admin.payslip.pdf_file: 給与明細
+admin.payslip.sendmail.check: 給与明細をメール送信する
+admin.payslip.repoty.count: 稼働回数
+
+admin.payslip.output_delivery_note: 月分給与明細
+admin.payslip.delivery_note_create_date: 発行日
+admin.payslip.reports: 業務報告
+admin.payslip.fare: 交通費
+admin.payslip.additem: 追加明細
+admin.payslip.note_message: メッセージ
+admin.payslip.note_remark: 備考
+
+admin.payslip.detail.no: No
+admin.payslip.detail.date: 日付
+admin.payslip.detail.business.type: 契約
+admin.payslip.detail.working: 作業
+admin.payslip.detail.working.time: 作業時間
+admin.payslip.detail.working.break: 休憩時間
+admin.payslip.detail.working.total: 合計時間
+admin.payslip.detail.working.breakdown: （基本｜時間外）
+admin.payslip.detail.customer: お客様
+admin.payslip.detail.amout: 内訳
+admin.payslip.detail.amout.basic: 基本
+admin.payslip.detail.amout.overtime: 時間外割増
+admin.payslip.detail.amout.advance: 立替金
+admin.payslip.detail.amout.fare: 交通費
+admin.payslip.detail.amout.total: 合計（税込）
+admin.payslip.detail.access: アクセス
+admin.payslip.detail.remark: 備考
+
+admin.payslip.additem.title: 名目
+admin.payslip.additem.amout: 金額
+admin.payslip.additem.remark: 備考
+
+#------------------------------------------------------------------------------------
+# 基本設定
+#------------------------------------------------------------------------------------
+# 機能名称
+admin.business_plan.management: 基本設定
+admin.business_plan.list: 基本料金一覧
+admin.business_plan.registration: 基本料金登録
+admin.business_plan.cancel: キャンセル設定
+admin.business_plan.fee.list: 料金表
+# 項目
+admin.business_plan.contractor.person: 個人
+admin.business_plan.contractor.corp: 法人
+admin.business_plan.contractor.percentage: 支払い料率
+admin.business_plan.period: 有効期間
+admin.business_plan.period_start: 有効期間（開始日）
+admin.business_plan.period_end: 有効期間（終了日）
+admin.business_plan.basic_time: 基本時間帯
+admin.business_plan.basic_time_start: 基本時間（開始）
+admin.business_plan.basic_time_end: 基本時間（終了）
+admin.business_plan.basic_time_bill: 基本単価/時
+admin.business_plan.bill_outside: 時間外単価/時
+admin.business_plan.basic_time_pay: 基本給与/時
+admin.business_plan.pay_outside: 時間外給与/時
+admin.business_plan.commission: 手数料
+admin.business_plan.tax: 税率(%)
+admin.business_plan.transfer_date: 振替日
+
+admin.business_plan.cancel.name: 項目
+admin.business_plan.cancel.customer_rate: 顧客請求率
+admin.business_plan.cancel.staff_rate: 給与率
+admin.business_plan.cancel.customer_fare: 交通費の請求
+admin.business_plan.cancel.staff_fare: 交通費の支払い
+
+admin.business_plan.period_start.blank: ___ / __ / __
+admin.business_plan.period_end.blank: ___ / __ / __
+admin.business_plan.basic_time.blank: __
+
+#------------------------------------------------------------------------------------
+# フロント：メッセージ
+#------------------------------------------------------------------------------------
+front.mypage.nav.top: HOME
+front.mypage.nav.invoice: ご請求情報
+front.mypage.nav.business: ご契約情報
+
+front.report.registration: 業務報告登録
+front.report.complete: 業務報告完了
+front.staff.login.login_phone_number: 携帯電話番号
+front.staff.login.annotation: ※数字のみ（ハイフンなし）で入力してください。
+front.staff.login.error: エラー：
+front.staff.login.not.phone_number: 入力された電話番号は登録されていません。
+front.staff.report.no.contract: 契約案件が登録されていません。
+front.staff.report.office.contact: 不明点があれば本部までお問合せください。
+front.staff.report.payment.check: 未精算の買い物代行がありましたか？
+front.staff.report.submit.button: お客様へ送信する
+
+front.my.login.login.email: ご登録メールアドレス
+front.my.login.login.phone_number: ご登録電話番号
+front.my.login.annotation.email: ※半角英数で入力してください。
+front.my.login.annotation.phone_number: ※数字のみ（ハイフンなし）で入力してください。
+front.my.login.error: エラー：
+front.my.login.not.phone_number: 入力された電話番号は登録されていません。
+front.my.login.not.email: 入力されたメールアドレスは登録されていません。

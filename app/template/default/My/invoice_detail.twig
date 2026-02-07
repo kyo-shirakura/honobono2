@@ -1,0 +1,93 @@
+{##}
+
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .menu-list {
+            display: flex;
+        }
+        .menu-icon {
+            width: 200px;
+            height: 200px;
+            margin: 25px;
+        }
+        .menu-icon div {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: x-large;
+        }
+        .menu-report {
+            background: #ffd9d9;
+        }
+        .menu-payslip {
+            background: #d9dfff;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>給与明細</h1>
+            </div>
+        </div>
+
+        <div class="ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <div class="ec-orderOrder">
+                    <div class="ec-definitions">
+                        <dt>あああ</dt>
+                        <dd>いいい</dd>
+                    </div>
+                    <div class="ec-definitions">
+                        <dt>ううう</dt>
+                        <dd>えええ</dd>
+                    </div>
+                </div>
+                <div class="ec-orderDelivery">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.delivery_info'|trans }}</h2>
+                    </div>
+                    <div class="ec-orderDelivery__title">{{ 'front.mypage.delivery'|trans }}</div>
+                    <div class="ec-orderDelivery__item">
+                        <div class="ec-imageGrid">
+                            <div class="ec-imageGrid__img">
+                                    <img src="{{ asset(''|no_image_product, 'save_image') }}"/>
+                            </div>
+                            <div class="ec-imageGrid__content">
+                                <p>
+                                １１１
+                                </p>
+                                <p>
+                                ２２２
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ec-orderPayment">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.payment_info'|trans }}</h2>
+                    </div>
+                    <p>３３３</p>
+                </div>
+                <div class="ec-orderConfirm">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.message'|trans }}</h2>
+                    </div>
+                    <p>４４４</p>
+                </div>
+            </div>
+        </div>
+        <div class="ec-role ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <a href="{{ url('mypage') }}" class="ec-inlineBtn ec-font-bold">{{ 'common.back'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

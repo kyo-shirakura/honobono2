@@ -1,0 +1,41 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block stylesheet %}
+<style type="text/css">
+    .breadcrumbs {
+        margin-top:50px;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.report.complete'|trans }}</h1>
+        </div>
+        <div class="ec-off2Grid">
+            <div class="ec-off2Grid__cell">
+                <div class="ec-borderedDefs_">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <center>
+                                <p>
+                                    お客様へ業務報告を送信いたしました。<br>
+                                    控えをメールしておりますので、ご確認ください。
+                                </p>
+                                <p class="breadcrumbs">
+                                    <a href="/staff/report" class="ec-inlineBtn ec-font-bold">別の業務報告を送る >></a>
+                                </p>
+                                <p class="breadcrumbs">
+                                    <a href="/staff/menu" class="ec-inlineBtn ec-font-bold"><< TOPに戻る</a>
+                                </p>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
