@@ -1,0 +1,73 @@
+{##}
+
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .menu-list {
+            display: flex;
+        }
+        .menu-icon {
+            width: 200px;
+            height: 200px;
+            margin: 25px;
+        }
+        .menu-icon div {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: x-large;
+        }
+        .menu-report {
+            background: #ffd9d9;
+        }
+        .menu-invoice {
+            background: #d9dfff;
+        }
+
+        @media screen and (max-width: 480px) {
+    	/* 480px以下に適用されるCSS（スマホ用） */
+            .menu-list{
+                padding: 10px;
+            }
+            .menu-icon {
+                margin: 10px;
+            }
+            .menu-icon div {
+                margin-top: 0px;
+            }
+            .menu-report,
+            .menu-invoice {
+                height: 220px;
+            }
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h1>{{ Customer.name01 }}様</h1>
+        </div>
+        <div class="ec-off2Grid">
+            <div class="ec-off2Grid__cell">
+                <div class="ec-login menu-list">
+                    <div class="menu-icon menu-invoice">
+                        <a href="{{ url('my_invoice') }}">
+                            <img src="{{ asset('assets/img/common/my-invoice.png', 'user_data') }}" />
+                            <div>ご請求書一覧</div>
+                        </a>
+                    </div>
+                    <div class="menu-icon menu-report">
+                        <a href="{{ url('my_contract') }}">
+                            <img src="{{ asset('assets/img/common/my_contract.png', 'user_data') }}" />
+                            <div>ご契約情報</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

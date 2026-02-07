@@ -1,0 +1,73 @@
+{##}
+
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .menu-list {
+            display: flex;
+        }
+        .menu-icon {
+            width: 200px;
+            height: 200px;
+            margin: 25px;
+        }
+        .menu-icon div {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: x-large;
+        }
+        .menu-report {
+            background: #ffd9d9;
+        }
+        .menu-payslip {
+            background: #d9dfff;
+        }
+
+        @media screen and (max-width: 480px) {
+    	/* 480px以下に適用されるCSS（スマホ用） */
+            .menu-list{
+                padding: 10px;
+            }
+            .menu-icon {
+                margin: 10px;
+            }
+            .menu-icon div {
+                margin-top: 0px;
+            }
+            .menu-report,
+            .menu-payslip {
+                height: 220px;
+            }
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h1>{{ Staff.name01 }}{{ 'common.menu.title'|trans }}</h1>
+        </div>
+        <div class="ec-off2Grid">
+            <div class="ec-off2Grid__cell">
+                <div class="ec-login menu-list">
+                    <div class="menu-icon menu-report">
+                        <a href="{{ url('staff_report') }}">
+                            <img src="{{ asset('assets/img/common/staff-report.png', 'user_data') }}" />
+                            <div>業務報告を送る</div>
+                        </a>
+                    </div>
+                    <div class="menu-icon menu-payslip">
+                        <a href="{{ url('staff_payslip') }}">
+                            <img src="{{ asset('assets/img/common/staff-payslip.png', 'user_data') }}" />
+                            <div>給与明細を見る</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

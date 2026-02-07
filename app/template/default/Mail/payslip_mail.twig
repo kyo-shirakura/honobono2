@@ -1,0 +1,24 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% autoescape 'safe_textmail' %}
+
+{{ Staff.name01 }} {{ Staff.name02 }} 様
+
+いつもお世話になっております、ほのぼのビジョンです！
+{{ Payslip.issue_ym | date_format('','Y年n月') }}分の給与明細をお送りいたします。
+
+{% endautoescape  %}
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+　※本メールは、
+　{{ BaseInfo.shop_name }}よりお送りしています。
+　もしお心当たりが無い場合は、その旨 {# 問い合わせ受付メール #}{{ BaseInfo.email02 }} までご連絡いただければ幸いです。
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

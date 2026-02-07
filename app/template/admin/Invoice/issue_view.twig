@@ -1,0 +1,325 @@
+{#
+請求書（印刷用）
+#}
+
+{% block stylesheet %}
+<style type="text/css">
+    body {
+      font-family: "Yu Gothic", sans-serif;
+      width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .header, .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 20px 0;
+      border-bottom: 2px solid #000;
+      padding-bottom: 5px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .billing-box {
+      width: 500px;
+      border: 2px solid #000;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .billing-box small {
+      display: block;
+      font-size: 12px;
+      font-weight: normal;
+      margin-top: 5px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+
+    table, th, td {
+      border: 1px solid #999;
+    }
+
+    th, td {
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+        background: #f9f9f9;
+    }
+    .note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .logo {
+      height: 40px;
+    }
+
+    .stamp {
+      height: 60px;
+    }
+
+    .bank-box {
+      border: 1px solid #999;
+      padding: 10px;
+      font-size: 13px;
+      background: #f9f9f9;
+    }
+
+    .small-text {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .corp-info {
+        margin-left: 460px;
+    }
+
+    .billing {
+        display: flex;
+    }
+
+    img.logo {
+        margin-left: 50px;
+    }
+
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script
+  src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+  integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+  crossorigin="anonymous"></script>
+
+<script>
+    // 合計金額
+    $(document).ready(function() {
+        var total = $('#amount_total').val();
+        var tax = Math.round( total / (1+ 0.1) * 0.1);
+
+        $('#amount_total_view').text( Number(total).toLocaleString() );
+        // 内税
+        $('#amount_tax_view').text( Number(tax).toLocaleString() );
+    });
+</script>
+{% endblock javascript %}
+
+
+{% block main %}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+
+                <!-- ヘッダー -->
+                <div class="header">
+                  <div>
+                    <p>{{ Customer.postal_code }}<br>{{ Customer.Pref }}{{ Customer.addr01 }}{{ Customer.addr02 }}</p>
+                    <p>{{ Customer.name01 }} {{ Customer.name02 }} 様</p>
+                  </div>
+                  <div>
+                    <p>
+                        No.{{ date('now') | date_modify('-1 month') | date('ym') }}{{ "%04d"|format( Customer.id ) }}
+                        <br>
+                        {{ date('now') | date('Y年m月d日') }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 請求元企業情報 -->
+                <div class="section corp-info">
+                  <div class="header">
+                    <div>
+                      株式会社 メディカルビジョン<br>
+                        〒167-0051 東京都杉並区荻窪3<br>
+                        Tel.03-3261-4611　Fax.03-3261-4613<br>
+                        経済省番号: T9010001030813
+                    </div>
+                    <div>
+                      <img class="stamp" src="{{ asset('assets/img/common/stamp.png', 'user_data') }}" alt="ほのぼのビジョン社印" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 請求書タイトル -->
+                <div class="title">請 求 書</div>
+                <div class="message">
+                  <p>
+                    平素は格別のお引き立てを賜り厚く御礼申し上げます。<br>
+                    ほのぼのビジョンのご利用につき、下記のとおりご請求申し上げます。
+                  </p>
+                </div>
+
+                <!-- 金額表示 -->
+                <div class="billing">
+                    <div class="billing-box">
+                      御請求金額（9月分）<br>
+                      ¥<span id='amount_total_view'></span>円
+                      <small>内、消費税額10%（¥<span id='amount_tax_view'></span>）</small>
+                    </div>
+                    <div>
+                      <img class="logo" src="{{ asset('assets/img/common/vision_2.png', 'user_data') }}" alt="ほのぼのビジョン ロゴ" />
+                    </div>
+                </div>
+                {% if Customer.payment_type == 1 %}
+
+                <!-- 支払先タイトル -->
+                <div class="message">
+                  <p>
+                    ※上記の金額をご指定口座より振替させていただきます。
+                  </p>
+                </div>
+                <!-- 支払先情報 -->
+                <div class="section bank-box">
+                  振替日：{{ issue_ymd | date('Y年m月d日') }}<br>
+                  ご指定口座：{{ Customer.transferee_account }}
+                  <div class="small-text">
+                  ※振替日の翌日以降の再引落はできません。<br>
+                  そのため、当日お引落ができなかった場合には、下記の弊社ゆうちょ銀行口座にお振込みくださいますよう、お願いいたします。<br>
+                  </div>
+                  <div class="bank-box small-text">
+                    &nbsp;&nbsp;［ゆうちょ銀行からの場合］記号10110　番号40378221<br>
+                    &nbsp;&nbsp;［他の金融機関からの場合］○一八（ゼロイチハチ）店（店番：018）普通 4037822 株式会社メディカルビジョン<br>
+                    <br>
+                    ※振込手数料はお客様ご負担にてお願い申し上げます
+                  </div>
+                </div>
+
+                {% elseif Customer.payment_type == 2 %}
+
+                <div class="message">
+                  <p>
+                    ※上記の金額をご登録のクレジットカード宛にご請求させていただきます。<br>
+                    引き落とし日等はご契約されているカード発行会社にご確認ください。
+                  </p>
+                </div>
+
+                {% elseif Customer.payment_type == 3 %}
+
+                <!-- 支払先タイトル -->
+                <div class="message">
+                  <p>
+                    ※上記の金額をお支払い期限までにご入金ください。
+                  </p>
+                </div>
+
+                <!-- 支払先情報 -->
+                <div class="section bank-box">
+                  お支払期限：{{ issue_ymd | date_modify('last day of this month') | date('Y年m月d日') }}<br>
+                  <div class="bank-box small-text">
+                    &nbsp;&nbsp;［ゆうちょ銀行からの場合］記号10110　番号40378221<br>
+                    &nbsp;&nbsp;［他の金融機関からの場合］○一八（ゼロイチハチ）店（店番：018）普通 4037822 株式会社メディカルビジョン<br>
+                    <br>
+                    ※振込手数料はお客様ご負担にてお願い申し上げます
+                  </div>
+                </div>
+
+                {% endif%}
+
+                <!-- 明細表 -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th>NO</th>
+                      <th>日付</th>
+                      <th>合計作業時間</th>
+                      <th>時間外</th>
+                      <th>担当スタッフ</th>
+                      <th>基本</th>
+                      <th>時間外割増</th>
+                      <th>立替金</th>
+                      <th>交通費</th>
+                      <th>合計</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% set total = 0 %}
+                  {% set no = 1 %}
+                  {% set Weekly = ['日','月','火','水','木','金','土'] %}
+                  {% for row in Report %}
+                      {% set result = get_report_breakdown( row ) %}
+                      {% set total = total + result.amout.total %}
+                      {% set weekday_no = row.working_day | date('w') %}
+
+                      <tr>
+                        <td>{{ no }}</td>
+                        <td>{{ row.working_day | date('m/d') }}({{ Weekly[weekday_no] }})</td>
+                        <td class='align-center'>
+                            {{ result.working.total }}
+                            <br>
+                            {{ row.working_time_start }}〜{{ row.working_time_end }}
+                        </td>
+                        <td>
+                            {{ result.working.overtime }}
+                        </td>
+                        <td>
+                          {{ row.Staff.name01 }} {{ row.Staff.name02 }}
+                        </td>
+                        <td class='align-right'>{{ result.amout.basic is empty ? '-' : result.amout.basic|format_number ~ '円' }}</td>
+                        <td class='align-right'>{{ result.amout.overtime is empty ? '-' : result.amout.overtime|format_number ~ '円' }}</td>
+                        <td class='align-right'>{{ row.payment_advance is empty ? '-' : row.payment_advance|format_number ~ '円' }}</td>
+                        <td class='align-right'>{{ row.fare is empty ? '-' : row.fare|format_number ~ '円' }}</td>
+                        <td class='align-right'>{{ result.amout.total is empty ? '-' : result.amout.total|format_number ~ '円' }}</td>
+                      </tr>
+                      {% set no = no + 1 %}
+                  {% endfor %}
+                    <tr>
+                      <td colspan="9" style="text-align: right; font-weight: bold;">総合計（税込）</td>
+                      <td><strong>{{ total|format_number }}円</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <input type='hidden' id='amount_total' value='{{ total }}' />
+
+                <!-- 交通費補足 -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan=3>担当スタッフ (交通費)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <td>
+                      スタッフ名
+                    </td>
+                    <td>
+                      200円
+                    </td>
+                    <td>
+                      自転車のため一律200円／回
+                    </td>
+                  </tbody>
+                </table>
+
+                <!-- 備考 -->
+                <div class="note">
+
+                </div>
+
+                </div>
+            </div>
+        </div>
+{% endblock %}

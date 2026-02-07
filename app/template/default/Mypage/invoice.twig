@@ -1,0 +1,111 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'index' %}
+
+{% set body_class = 'mypage_invoice' %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ 'front.mypage.nav.business'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+
+        {% set remessage = false %}
+
+        <div class="ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <div class="ec-orderOrder">
+                    <div class="ec-definitions">
+                        <dt>{{ 'front.mypage.order_date'|trans }}</dt>
+                        <dd>--</dd>
+                    </div>
+                    <div class="ec-definitions">
+                        <dt>{{ 'front.mypage.order_no'|trans }}</dt>
+                        <dd>--</dd>
+                    </div>
+                </div>
+                <div class="ec-orderDelivery">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.nav.business'|trans }}</h2>
+                    </div>
+                </div>
+                <div class="ec-orderPayment">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.payment_info'|trans }}</h2>
+                    </div>
+                    <p>{{ 'front.mypage.payment'|trans }} : ーー</p>
+                </div>
+                <div class="ec-orderConfirm">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.message'|trans }}</h2>
+                    </div>
+                    <p>ーー</p>
+                </div>
+                <div class="ec-orderMails">
+                    <div class="ec-rectHeading">
+                        <h2>{{ 'front.mypage.mail_list'|trans }}</h2>
+                    </div>
+                    <div class="ec-orderMail">
+                        <div class="ec-orderMail__time">time</div>
+                        <div class="ec-orderMail__link"><a>link</a></div>
+                        <div class="ec-orderMail__body">body<p class="ec-orderMail__close"><a>{{ 'common.close'|trans }}</a></p></div>
+                    </div>
+
+                    <p class="ec-reportDescription">{{ 'front.mypage.mail_not_found'|trans }}</p>
+                </div>
+
+            </div>
+            <div class="ec-orderRole__summary">
+                <div class="ec-totalBox">
+                    <dl class="ec-totalBox__spec">
+                        <dt>{{ 'common.subtotal'|trans }}</dt>
+                        <dd> -- </dd>
+                    </dl>
+                    <dl class="ec-totalBox__spec">
+                        <dt>{{ 'common.charge'|trans }}</dt>
+                        <dd> -- </dd>
+                    </dl>
+                    <dl class="ec-totalBox__spec">
+                        <dt>{{ 'common.delivery_fee'|trans }}</dt>
+                        <dd> -- </dd>
+                    </dl>
+                    <div class="ec-totalBox__total">{{ 'common.total'|trans }}<span
+                                class="ec-totalBox__price">{{ 1000|price }}</span><span
+                                class="ec-totalBox__taxLabel">{{ 'common.tax_include'|trans }}</span></div>
+                        <dl class="ec-totalBox__spec">
+                            <dt>item.product_name</dt>
+                            <dd>item.total_price</dd>
+                        </dl>
+                    <div class="ec-totalBox__paymentTotal">{{ 'common.total'|trans }}<span
+                                class="ec-totalBox__price">{{ 2000|price }}</span><span
+                                class="ec-totalBox__taxLabel">{{ 'common.tax_include'|trans }}</span></div>
+                        <dl class="ec-totalBox__taxRate">
+                            <dt>{{ 'common.tax_rate_target'|trans }}</dt>
+                            <dd>{{ 3300|price }} ({{ 'common.tax_amount'|trans }} {{ 300|price }})</dd>
+                        </dl>
+                </div>
+                    <p class="ec-color-accent">
+                        <strong>{{ 'front.mypage.reorder_message'|trans }}</strong>
+                    </p>
+            </div>
+        </div>
+        <div class="ec-role ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <a href="{{ url('mypage') }}" class="ec-inlineBtn ec-font-bold">{{ 'common.back'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

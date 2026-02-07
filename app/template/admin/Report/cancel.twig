@@ -1,0 +1,315 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['report', 'report_cancel'] %}
+
+{% block title %}{{ 'admin.report.cancel'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.report.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .text-center {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .cancel {
+            color: #f00;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+    <script>
+        // 業務報告
+        $(function() {
+            // 新規登録の場合、初期値を設定
+            if( $('#admin_search_report_working_day').val().length == 0 ){
+                $('#admin_search_report_working_day').text('{{ date('now')|date('Y-m-d') }}');
+            }
+            if( $('#admin_search_report_working_time_start').val().length == 0 ){
+                $('#admin_search_report_working_time_start').val('07:00');
+            }
+            if( $('#admin_search_report_working_time_end').val().length == 0 ){
+                $('#admin_search_report_working_time_end').val('07:00');
+            }
+            if( $('#admin_search_report_working_time_break').val().length == 0 ){
+                $('#admin_search_report_working_time_break').val(0);
+            }
+            if( $('#admin_search_report_working_time_total').val().length == 0 ){
+                $('#admin_search_report_working_time_total').val('0:00');
+            }
+
+            // 合計時間を算出
+            $('#admin_search_report_working_day').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#admin_search_report_working_time_start').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#admin_search_report_working_time_end').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#admin_search_report_working_time_break').on('change', function() {
+                working_time_total_calc();
+            });
+            // 未精算がある場合
+            $('#payment').on('change', function() {
+                var checked = $(this).prop('checked');
+                if (checked) {
+                    //$('input[id^="check_"]').prop('checked', true);
+                    $('.block_payment_advance').show();
+                    $('.block_payment_receipt').show();
+                    //$('.block_payment_advance').css('display', 'flex');
+                    //$('.block_payment_receipt').css('display', 'flex');
+                } else {
+                    //$('input[id^="check_"]').prop('checked', false);
+                    $('.block_payment_advance').hide();
+                    $('.block_payment_receipt').hide();
+                }
+            });
+        });
+        // 合計時間
+        function working_time_total_calc(){
+            var timetotal = '00:00';
+            if(
+                !$('#admin_search_report_working_time_start').length
+                || !$('#admin_search_report_working_time_end').length
+                || !$('#admin_search_report_working_time_break').length
+            ){
+            }else{
+                const tday = "2024/01/01";
+                const starttime = $('#admin_search_report_working_time_start').val();
+                const endtime = $('#admin_search_report_working_time_end').val();
+                const breakminute = $('#admin_search_report_working_time_break').val();
+                const breaktime = `${Math.floor(breakminute / 60)}:${ breakminute % 60 }`;
+
+                let date1 = new Date(`${tday} ${starttime}`);
+                let date2 = new Date(`${tday} ${endtime}`);
+                let date3 = breakminute * 60000;
+                let ms = date2 - date1 - date3;
+                if ( ms < 0 ){ return; }
+
+                const hour = Math.floor(ms / 3600000);
+                const minute = Math.floor((ms - 3600000 * hour) / 60000);
+                const hh = ("00" + hour).slice(-2);
+                const mm = ("00" + minute).slice(-2);
+                timetotal = hh + ':' + mm;
+            }
+            $('#admin_search_report_working_time_total').val(timetotal);
+        }
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <form name="report_form" role="form" id="report_form" method="post" class="h-adr"
+          action="{%- if Report.id %}{{ url('admin_report_cancel_edit', { id : Report.id }) }}{% else %}{{ url('admin_report_cancel') }}{% endif -%}"
+          novalidate>
+        <span class="p-country-name" style="display:none;">Japan</span>
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.report.info'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#ordererInfo"
+                                       aria-expanded="false" aria-controls="ordererInfo">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+<!--
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.id'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <p>{{ Report.id }}</p>
+                                    </div>
+                                </div>
+-->
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.staff'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.Staff) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.customer'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.Customer) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.business'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.Business) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.working_day'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.working_day, { type : 'date' }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.working_time_start'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.working_time_start, { 'type' : 'time', 'attr': { 'min':'07:00', 'max':'20:45', 'step':1800 } }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.working_time_end'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.working_time_end, { 'type' : 'time', 'attr': { 'min':'07:00', 'max':'20:45', 'step':1800 } }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.working_time_break'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.working_time_break, { 'type' : 'number', 'attr': { 'min':0, 'max':75, 'step':15 } }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.working_time_total'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.working_time_total, { 'attr': { 'readonly':true } }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span class="cancel">{{ 'admin.report.cancel.kind'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.CancelKind) }}
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="admin_search_report_work_details" name="admin_search_report[work_details][]" class="form-check-input" value="">
+                                <input type="hidden" id="admin_search_report_safety_confirmation" name="admin_search_report[safety_confirmation][]" class="form-check-input" value="">
+
+{#
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.work_details'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.work_details) }}
+                                        <div id="work_detail_other">
+                                            {{ form_widget(form.work_other_check) }}
+                                            {{ form_widget(form.work_other_text) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.safety_confirmation'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.safety_confirmation) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.payment_advance'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.payment_advance, { type : 'number' }) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.payment_receipt'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                    {{ form_widget(form.file_receipt, { 'attr': { 'accept' : 'image/*' } }) }}
+                                    </div>
+                                </div>
+#}
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.report.remark'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.remark, { attr:{ 'rows' : 6 } }) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-8 text-center">
+                                        <input type='checkbox'>
+                                        <span>キャンセル登録する</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_business_page', { page_no : app.session.get('eccube.admin.report.search.page_no')|default('1') } ) }}?resume=1">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'admin.report.list'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                {%- if Report.id %}
+                                <a href="{{ url('admin_report_trash', {'id': Report.id }) }}" {{ csrf_token_for_anchor() }} class="ec-icon" data-method="put" data-message="{{ 'admin.common.trash.message'|trans }}">
+                                <button class="btn btn-ec-delete px-5"
+                                        type="button">{{ 'admin.common.trash'|trans }}</button>
+                                </a>
+                                {% endif -%}
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

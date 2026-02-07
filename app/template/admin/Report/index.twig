@@ -1,0 +1,212 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['report', 'report_master'] %}
+
+{% block title %}{{ 'admin.report.list'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.report.management'|trans }}{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css', 'admin') }}">
+
+    <style type="text/css">
+        .datepicker-days th.dow:first-child,
+        .datepicker-days td:first-child {
+            color: #f00;
+        }
+
+        .datepicker-days th.dow:last-child,
+        .datepicker-days td:last-child {
+            color: #00f;
+        }
+        .image_size_s{
+            height: 25px;
+        }
+        .js-listSort{
+            margin: auto 5px;
+        }
+        .icon-cross{
+            width: 30px;
+        }
+        tr.cancel > td,
+        tr.cancel > td > a {
+            color: #f00;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+
+    <!-- select2 -->
+    <script src="/html/template/admin/assets/js/jquery-3.5.1.js"></script>
+    <script src="/html/template/admin/assets/js/select2.min.js"></script>
+
+    <script>
+        $(function() {
+            $('.js-listSort').on('click', function() {
+                $('#search_form').submit();
+            });
+        });
+
+        // スタッフ名のサジェスト化
+        $('#admin_search_report_Staff').select2();
+    </script>
+
+{% endblock javascript %}
+
+
+{% block main %}
+    <!--検索条件設定テーブルここから-->
+    <div class="c-outsideBlock">
+        <form name="search_form" id="search_form" method="POST" action="{{ url('admin_report') }}">
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    {{ form_widget(searchForm._token) }}
+                    <div class="col-3">
+                        <div>
+                            <label class="col-form-label">{{ 'admin.report.staff'|trans }}</label>
+                            {{ form_widget(searchForm.Staff) }}
+                            {{ form_errors(searchForm.Staff) }}
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div>
+                            <label class="col-form-label">{{ 'admin.report.working_ym'|trans }}</label>
+                            {{ form_widget(searchForm.working_ym) }}
+                            {{ form_errors(searchForm.working_ym) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-inline-block mb-3 collapsed" data-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail">
+                </div>
+            </div>
+
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    <div class="mb-4">
+                        <div class="col-12">
+                            <button class="btn btn-ec-conversion px-5" type="submit" id="search_submit">{{ 'admin.common.search'|trans }}</button>
+                            {% if pagination %}
+                                <span class="font-weight-bold ml-2" id="search_total_count">{{ 'admin.common.search_result'|trans({"%count%":pagination.totalItemCount})|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--
+            <div class="c-outsideBlock__contents mb-5">
+                {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
+            </div>
+-->
+            {{ form_widget(searchForm.sortkey, {'attr': {'class': 'js-listSort-key'}}) }}
+            {{ form_widget(searchForm.sorttype, {'attr': {'class': 'js-listSort-type'}}) }}
+        </form>
+    </div>
+    <!--検索条件設定テーブルここまで-->
+
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                {% if pagination and pagination.totalItemCount %}
+
+                    <div class="card rounded report-0 mb-4 d-block">
+                        <div class="card-body p-0">
+                            <table class="table table-sm" id="search_result">
+                                <thead>
+                                <tr>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.id'|trans }}
+                                        <!--<a href="#" class="js-listSort" data-sortkey="report_id"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>-->
+                                    </th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.staff'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">
+                                            {{ 'admin.report.customer'|trans }}
+                                        <a href="#" class="js-listSort" data-sortkey="customer_id"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+                                    </th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_day'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_start'|trans }} - {{ 'admin.report.working_time_end'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_break'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_total'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.remark'|trans }}</th>
+                                    <th class="report-top-0 pt-2 pb-2 text-center pr-3">{{ 'admin.common.trash'|trans }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for report in pagination %}
+                                    {% if report.CancelKind %}
+                                    <tr class="cancel">
+                                    {% else %}
+                                    <tr>
+                                    {% endif %}
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                        {% if report.CancelKind %}
+                                        <a class="action-edit" href="{{ url('admin_report_cancel_edit', { id : report.id }) }}">詳細</a>
+                                        {% else %}
+                                        <a class="action-edit" href="{{ url('admin_report_edit', { id : report.id }) }}">詳細</a>
+                                        {% endif %}
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            <a class="action-edit" href="{{ url('admin_staff_edit', { id : report.Staff.id }) }}">{{ report.Staff.name01 }} {{ report.Staff.name02 }}</a>
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            <a class="action-edit" href="{{ url('admin_customer_edit', { id : report.Customer.id }) }}">{{ report.Customer.name01 }} {{ report.Customer.name02 }}</a>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {{ report.working_day | replace({ '-': '/' }) | trans }}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {{ report.working_time_start }} - {{ report.working_time_end }}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {{ report.working_time_break is empty ? '-' : report.working_time_break }}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {{ report.working_time_total | trans }}
+                                        </td>
+                                        <td class="align-middle text-left">
+                                            {{ report.remark | length > 20 ? report.remark|slice(0, 20) ~ '…' : report.remark }}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="{{ url('admin_report_trash', {'id': report.id }) }}" {{ csrf_token_for_anchor() }} class="ec-icon" data-method="put" data-message="{{ 'admin.common.trash.message'|trans }}">
+                                                <img class="icon-cross" src="{{ asset('assets/icon/cross.svg') }}" alt="delete">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-md-center mb-4"></div>
+                        </div>
+                        <div class="row justify-content-md-center mb-4">
+                            {% if pagination.totalItemCount > 0 %}
+                                {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_report_page' } %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card rounded report-0">
+                        <div class="card-body p-4">
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% autoescape 'safe_textmail' %}
+※本メールは自動配信メールです。
+
+{{ Customer.name01 }} {{ Customer.name02 }} 様
+
+いつもお世話になっております、ほのぼのビジョンです！
+業務報告をお送りいたします。
+
+ーーーーーーーーーーーーーーーーーー
+【担当スタッフ】{{ Staff.name01 }} {{ Staff.name02 }}
+【作業日】{{ Report.working_day | replace({ '-': '/' }) | trans }}
+【時間】{{ Report.working_time_start }}〜{{ Report.working_time_end }}
+【休憩】{{ Report.working_time_break }}分
+【合計作業時間】{{ Report.working_time_total }}
+【作業内容】
+{% for data in work_details %}
+  {{ data | trans }}
+{% endfor %}
+【作業内容（その他）】{{ Report.work_other_text }}
+【安全確認】
+{% for data in safety_confirmation %}
+  {{ data | trans }}
+{% endfor %}
+
+{% if Report.payment_advance is not empty %}
+＜買い物＞
+［立替金（買い物代金）］{{ Report.payment_advance }}円
+［レシート添付］{% if Report.payment_receipt is not empty %}あり{% else %}なし{% endif %}
+{% endif %}
+
+【備考・連絡事項】
+{% if Report.remark %}{{ Report.remark }}{% endif %}
+ーーーーーーーーーーーーーーーーーー
+{% endautoescape  %}
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+　※本メールは、
+　{{ BaseInfo.shop_name }}よりお送りしています。
+　もしお心当たりが無い場合は、その旨 {# 問い合わせ受付メール #}{{ BaseInfo.email02 }} までご連絡いただければ幸いです。
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

@@ -1,0 +1,219 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['payslip', 'payslip_issue_edit'] %}
+
+{% block title %}{{ 'admin.payslip.registration'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.payslip.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        table > thead > * {
+            text-align: center;
+        }
+        th {
+            border-right: 1px solid #ddd;
+        }
+        .valign-middle{
+            vertical-align: middle;
+        }
+        .align-right{
+            text-align: right;
+        }
+        .align-center{
+            text-align: center;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <h4 class="box-title fw-bold">{{ date('now') | date_modify('-1 month') | date('Y年m')}}{{ 'admin.payslip.output_delivery_note'|trans }}</h4>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h4 class="fw-bold">{{ Staff.name01 }} {{ Staff.name02 }} 様</h4>
+                            </div>
+
+                            <div class="mb-3">
+                                <h5 class="fw-bold">{{ date('now') | date_modify('-1 month') | date('m')}}月分支給額: 11,920円</h5>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.payslip.delivery_note_create_date'|trans }}</label>
+                                {{ form_widget(form.issue_ym) }}
+                                {{ form_errors(form.issue_ym) }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.payslip.reports'|trans }}</label>
+                                <form target='_blank' name="search_form" id="search_form" method="POST" action="{{ url('admin_report') }}">
+                                    <input type="hidden" id="admin_search_report__token" name="admin_search_report[_token]" value="{{ AdminReportFormToken }}">
+                                    <input type='hidden' name='admin_search_report[Staff]' id='admin_search_report_Staff' value='1' />
+                                    <input type='hidden' name='admin_search_report[working_ym]' id='admin_search_report_working_ym' value='2025-05' />
+                                    <button class="btn btn-ec-conversion px-5 ladda-button" type="submit" id="search_submit" data-style="expand-right">
+                                        <span class="ladda-label">{{ 'admin.payslip.report.link'|trans }}</span>
+                                        <span class="ladda-spinner"></span>
+                                    </button>
+                                </form>
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                        <tr>
+<!--
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.payslip.detail.no'|trans }}</th>
+-->
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.payslip.detail.business.type'|trans }}</th>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.payslip.detail.date'|trans }}</th>
+                                            <th colspan=6>{{ 'admin.payslip.detail.working'|trans }}</th>
+                                            <th rowspan=2 class='valign-middle'>{{ 'admin.payslip.detail.customer'|trans }}</th>
+                                            <th colspan=5>{{ 'admin.payslip.detail.amout'|trans }}</th>
+
+                                        </tr>
+                                        <tr>
+                                            <th colspan=3>{{ 'admin.payslip.detail.working.time'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.working.break'|trans }}</th>
+                                            <th colspan=2>{{ 'admin.payslip.detail.working.total'|trans }}{{ 'admin.payslip.detail.working.breakdown'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.basic'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.overtime'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.advance'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.fare'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.total'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in Report %}
+                                        {% set result = get_report_breakdown( row ) %}
+                                        <tr>
+<!--
+                                            <td>{{ row.id }}</td>
+-->
+                                            <td>{{ row.Business.kind_id is empty ? '' : BusinessKinds[row.Business.kind_id] }}</td>
+                                            <td>{{ row.working_day }}</td>
+                                            <td class='align-center'>{{ row.working_time_start }}</td> <td class='align-center'>-</td> <td class='align-center'>{{ row.working_time_end }}</td>
+                                            <td class='align-center'>{{ row.working_time_break }}</td>
+                                            <td class='align-right'>
+                                                {{ row.working_time_total }}
+                                            </td>
+                                            <td class='align-center'>
+                                                （{{ result.working.basic }}｜{{ result.working.overtime }}）
+                                            </td>
+                                            <td>{{ row.Customer.name01 }}様</td>
+                                            <td class='align-right'>{{ result.amout.basic is empty ? '-' : result.amout.basic ~ '円' }}</td>
+                                            <td class='align-right'>{{ result.amout.overtime is empty ? '-' : result.amout.overtime ~ '円' }}</td>
+                                            <td class='align-right'>{{ row.payment_advance is empty ? '-' : row.payment_advance ~ '円' }}</td>
+                                            <td class='align-right'>{{ row.fare is empty ? '-' : row.fare ~ '円' }}</td>
+                                            <td class='align-right'>{{ result.amout.total is empty ? '-' : result.amout.total ~ '円' }}</td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.payslip.fare'|trans }}</label>
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'admin.payslip.detail.customer'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.amout.fare'|trans }}</th>
+                                            <th>{{ 'admin.payslip.detail.access'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in BusinessStaff %}
+                                        <tr>
+                                            <td>{{ row.Business.Customer.name01 }}様</td>
+                                            <td class='align-right'>{{ row.fare is empty ? '-' : row.fare ~ '円' }}</td>
+                                            <td>{{ row.access }}</td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.payslip.additem'|trans }}</label>
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'admin.payslip.additem.title'|trans }}</th>
+                                            <th>{{ 'admin.payslip.additem.amout'|trans }}</th>
+                                            <th>{{ 'admin.payslip.additem.remark'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ form_widget(form.item_title, { 'value': '1' }) }}</td>
+                                            <td class='align-right'>{{ form_widget(form.item_amout) }}</td>
+                                            <td>{{ form_widget(form.item_remark) }}</td>
+                                        </tr>
+
+                                        <tr>
+                                                                                    <td>            <select id="payslip_issue_item_title" name="payslip_issue[item_title]" required="required" class="form-select"><option value="" selected="selected">選択してください</option><option value="1">郵送費（切手代）</option><option value="2">その他</option></select>
+                                            </td>
+                                                                                    <td class="align-right"><input type="text" id="payslip_issue_item_amout" name="payslip_issue[item_amout]" maxlength="255" class="form-control"></td>
+                                                                                    <td><input type="text" id="payslip_issue_item_remark" name="payslip_issue[item_remark]" maxlength="255" class="form-control"></td>
+                                                                                </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.payslip.note_message'|trans }}</div>
+
+                            <div class="mb-3">
+                                {{ form_widget(form.message, { attr:{ 'rows':6 }}) }}
+                                {{ form_errors(form.message) }}
+                            </div>
+
+                            <div class="fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.payslip.note_remark'|trans }}</div>
+                            <div class="mb-3">
+                                {{ form_widget(form.remark, { attr:{ 'rows':6 }}) }}
+                                {{ form_errors(form.remark) }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <button class="btn btn-ec-regular px-5" type="button">{{ 'admin.common.close'|trans }}</button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'admin.common.create'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

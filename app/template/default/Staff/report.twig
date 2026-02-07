@@ -1,0 +1,491 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block stylesheet %}
+<style type="text/css">
+    h2.main {
+        margin-bottom: 30px;
+        font-size: 1;
+        text-align: center;
+    }
+    div.logo {
+        margin: 10px 30px;
+    }
+    div.main-image img {
+        width: 100%;
+    }
+    div.t-line {
+        border-top: 1px dotted #ccc;
+        padding-top: 10px;
+    }
+    div.b-line {
+        border-bottom: 1px dotted #ccc;
+        padding-bottom: 10px;
+    }
+    span.annotation {
+        color: #f00;
+    }
+
+    .error {
+        border: solid 2px;
+        border-color: red;
+    }
+    @media screen and (max-width: 480px) {
+    /* 480px以下に適用されるCSS（スマホ用） */
+        div.row {
+            display: block;
+        }
+        div.col-4 {
+            width: auto;
+        }
+        div.working_time {
+            display: flex;
+        }
+    }
+    @media screen and (min-width: 768px) {
+        /* 768px以上に適用されるCSS（PC用） */
+        div.ec-grid2__cell {
+            margin-left: 25%;
+        }
+    }
+    div.block_payment_advance {
+        display: none;
+    }
+    div.block_payment_receipt {
+        display: none;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+    <script>
+        // 業務報告
+        $(function() {
+            $('#working_time_total_disp').text('0:00');
+            // 合計時間を算出
+            $('#working_time_start_hour').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#working_time_start_minute').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#working_time_end_hour').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#working_time_end_minute').on('change', function() {
+                working_time_total_calc();
+            });
+            $('#working_time_break').on('change', function() {
+                working_time_total_calc();
+            });
+            // 未精算がある場合
+            $('#payment').on('change', function() {
+                var checked = $(this).prop('checked');
+                if (checked) {
+                    //$('input[id^="check_"]').prop('checked', true);
+                    $('.block_payment_advance').show();
+                    $('.block_payment_receipt').show();
+                    //$('.block_payment_advance').css('display', 'flex');
+                    //$('.block_payment_receipt').css('display', 'flex');
+                } else {
+                    //$('input[id^="check_"]').prop('checked', false);
+                    $('.block_payment_advance').hide();
+                    $('.block_payment_receipt').hide();
+                }
+            });
+            // バリデーション
+            $('#form1').on('submit', function() {
+                if ( $('#Business').val() == '' ){
+                    $('#Business').addClass('error');
+                    $('#Business').focus();
+                    return false;
+                }
+            });
+            $('#Business').on('click', function() {
+                $('#Business').removeClass('error');
+            });
+
+        });
+        // 合計時間
+        function working_time_total_calc(){
+            var timetotal = '00:00';
+            if(
+                !$('#working_time_start_hour').length
+                || !$('#working_time_start_minute').length
+                || !$('#working_time_end_hour').length
+                || !$('#working_time_end_minute').length
+                || !$('#working_time_break').length
+            ){
+            }else{
+                const tday = "2024/01/01";
+                const starttime = $('#working_time_start_hour').val() + ':' + $('#working_time_start_minute').val();
+                const endtime = $('#working_time_end_hour').val() + ':' + $('#working_time_end_minute').val();
+                const breakminute = $('#working_time_break').val();
+                const breaktime = `${Math.floor(breakminute / 60)}:${ breakminute % 60 }`;
+
+                let date1 = new Date(`${tday} ${starttime}`);
+                let date2 = new Date(`${tday} ${endtime}`);
+                let date3 = breakminute * 60000;
+                let ms = date2 - date1 - date3;
+//                var diff = date2.getTime() - date1.getTime();
+//                console.log(diff / (60*60*1000)); // 48
+                if ( ms < 0 ){ return; }
+
+                const hour = Math.floor(ms / 3600000);
+                const minute = Math.floor((ms - 3600000 * hour) / 60000);
+                const hh = ("00" + hour).slice(-2);
+                const mm = ("00" + minute).slice(-2);
+                timetotal = hh + ':' + mm;
+            }
+            $('#working_time_total').val(timetotal);
+            $('#working_time_total_disp').text(timetotal);
+        }
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <div class="ec-role">
+        <div class="ec-pageHeader">
+            <h4>{{ Staff.name01 }}さん、おつかれさまです。</h4>
+            <h1>{{ 'front.report.registration'|trans }}</h1>
+        </div>
+        <div class="ec-off2Grid">
+            <div class="ec-off2Grid__cell">
+                <form id="form1" method="post" action="{{ url('staff_report_complete') }}" role="form" id="staff_report_form"
+                 class="h-adr" enctype="multipart/form-data" novalidate>
+
+                    <span class="p-country-name" style="display:none;">Japan</span>
+                    {{ form_widget(form._token) }}
+                    <p class="ec-para-normal">
+{#
+                    {{ 'front.contact.inquiry_notice'|trans|nl2br }}
+#}
+                    </p>
+                    <div class="ec-borderedDefs_">
+                        <div class="card-body">
+{#
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.customer'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.Customer) }}
+                                        {{ form_errors(form.Customer) }}
+                                    </div>
+                                </div>
+                            </div>
+#}
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.customer'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.Business) }}
+                                        {{ form_errors(form.Business) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.working_day'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.working_day) }}
+                                        {{ form_errors(form.working_day) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.working_time_start'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row working_time">
+{#
+                                        {{ form_widget(form.working_time_start, { 'type' : 'time', 'attr': { 'min' : '07:00', 'max' : '20:45', 'step' : 1800} }) }}
+#}
+                                        {{ form_widget(form.working_time_start_hour, { 'attr': {'style': 'width:auto;'} }) }}
+                                        {{ form_widget(form.working_time_start_minute, { 'attr': {'style': 'width:auto;'} }) }}
+                                        {{ form_errors(form.working_time_start_hour) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.working_time_end'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row working_time">
+                                        {{ form_widget(form.working_time_end_hour, { 'attr': {'style': 'width:auto;'} }) }}
+                                        {{ form_widget(form.working_time_end_minute, { 'attr': {'style': 'width:auto;'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.working_time_break'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.working_time_break) }}
+                                        {{ form_errors(form.working_time_break) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 b-line">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.working_time_total'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <span id='working_time_total_disp' name='working_time_total_disp'></span>
+                                        {{ form_widget(form.working_time_total) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 b-line">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.work_details'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.work_details) }}
+                                        <div id="work_detail_other">
+                                            {{ form_widget(form.work_other_check) }}
+                                            {{ form_widget(form.work_other_text) }}
+                                        </div>
+                                        {{ form_errors(form.work_details) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 b-line">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.safety_confirmation'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.safety_confirmation) }}
+                                        {{ form_errors(form.safety_confirmation) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.payment'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.payment) }}
+                                        {{ form_errors(form.payment) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 block_payment_advance">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.payment_advance'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.payment_advance, { type : 'number' }) }}
+                                        {{ form_errors(form.payment_advance) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 block_payment_receipt">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.payment_receipt'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.file_receipt, { 'attr': { 'accept' : 'image/*' } }) }}
+{#
+                                        {{ form_widget(form.file_receipt, { 'attr': { 'capture' : 'environment', 'accept' : 'image/*' } }) }}
+#}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 t-line">
+                                <div class="col-4">
+                                    <span>{{ 'admin.report.remark'|trans }}</span>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        {{ form_widget(form.remark, { attr : { rows : "8"} }) }}
+                                        {{ form_errors(form.remark) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+{#
+                        <dl>
+                            <dt>
+                                {{ 'admin.report.staff'|trans }}
+                            </dt>
+                            <dd>
+                                <div class="ec-halfInput{{ has_errors(form.Staff, form.Staff) ? ' error' }}">
+                                    {{ form_widget() }}
+                                    {{ form_errors(form.Staff) }}
+                                </div>
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt>
+                                {{ 'admin.report.customer'|trans }}
+                            </dt>
+                            <dd>
+                                <div class="ec-halfInput{{ has_errors(form.Customer, form.Customer) ? ' error' }}">
+                                    {{ form_widget(form.Customer) }}
+                                    {{ form_errors(form.Customer) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <span>{{ 'admin.report.working_day'|trans }}</span>
+                            </dt>
+                            <dd>
+                                {{ form_widget(form.working_day) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <div class="col">
+                                    {{ 'admin.report.working_time_start'|trans }}
+                                </div>
+                                <div class="col">
+                                    -
+                                </div>
+                                <div class="col">
+                                    {{ 'admin.report.working_time_end'|trans }}
+                                </div>
+                            </dt>
+                            <dd>
+                                {{ form_widget(form.working_time_start, { 'type' : 'time', 'attr': { 'min' : '07:00', 'max' : '20:45', 'step' : 900} }) }}
+                                 -
+                                {{ form_widget(form.working_time_end, { 'type' : 'time', 'attr': { 'min' : '07:00', 'max' : '20:45', 'step' : 900} }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <div class="col">
+                                    <span>{{ 'admin.report.working_time_break'|trans }}</span>
+                                </div>
+                            </dt>
+                            <dd>
+                                {{ form_widget(form.working_time_break) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <span>{{ 'admin.report.work_details'|trans }}</span>
+                            </dt>
+                            <dd>
+                                {{ form_widget(form.work_details) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <span>{{ 'admin.report.safety_confirmation'|trans }}</span>
+                            </dt>
+                            <dd>
+                                {{ form_widget(form.safety_confirmation) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <span>{{ 'admin.report.payment'|trans }}</span>
+                            </dt>
+                            <dd>
+                                <div class="ec-select">
+                                    <dl>
+                                        <dt>
+                                            <span>{{ 'admin.report.payment_deposit'|trans }}</span>
+                                        </dt>
+                                        <dd>
+                                            {{ form_widget(form.payment_deposit, { type : 'number' }) }}
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>
+                                            <span>{{ 'admin.report.payment_advance'|trans }}</span>
+                                        </dt>
+                                        <dd>
+                                            {{ form_widget(form.payment_advance, { type : 'number' }) }}
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>
+                                            <span>{{ 'admin.report.payment_change'|trans }}</span>
+                                        </dt>
+                                        <dd>
+                                            {{ form_widget(form.payment_change, { type : 'number' }) }}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </dd>
+                        </dl>
+                        #}
+                        {#
+                        <dl>
+                            <dt>
+                                <span>{{ 'admin.report.remark'|trans }}</span>
+                            </dt>
+                            <dd>
+                                <div class="ec-input{{ has_errors(form.remark) ? ' error' }}">
+                                    {{ form_widget(form.remark, { attr : { rows : "8"} }) }}
+                                    {{ form_errors(form.remark) }}
+                                </div>
+                                <p>{{ 'front.contact.order_notice'|trans }}</p>
+                            </dd>
+                        </dl>
+                        #}
+                        {# エンティティ拡張の自動出力 #}
+{#
+                        {% for f in form|filter(f => f.vars.eccube_form_options.auto_render) %}
+                            {% if f.vars.eccube_form_options.form_theme %}
+                                {% form_theme f f.vars.eccube_form_options.form_theme %}
+                                {{ form_row(f) }}
+                            {% else %}
+                                <dl>
+                                    <dt>
+                                        {% set label_class =  f.vars.label_attr.class is defined ? f.vars.label_attr.class : '' %}
+                                        {{ form_label(f, f.vars.label, { 'label_attr': {'class': label_class ~ ' ec-label' }}) }}
+                                    </dt>
+                                    <dd>
+                                        <div class="{{ f.vars.eccube_form_options.style_class }}{{ has_errors(f) ? ' error' }}">
+                                            {{ form_widget(f) }}
+                                            {{ form_errors(f) }}
+                                        </div>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                        {% endfor %}
+#}
+
+{{ form_widget(form.Staff, { 'value' : "#{ Staff.id }" }) }}
+
+<br>
+<p><center>お客様へ業務報告を送信します。よろしいですか？</center></p>
+                    </div>
+
+                    <div class="ec-RegisterRole__actions">
+                        <div class="ec-off4Grid">
+                            <div class="ec-off4Grid__cell">
+                                <button type="submit" class="ec-blockBtn--action" name="mode" value="confirm">{{ 'front.staff.report.submit.button'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

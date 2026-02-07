@@ -1,0 +1,62 @@
+{##}
+
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'staffpage' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        table td {
+            background: #eee;
+            padding: 10px;
+        }
+        table tr:nth-child(odd) td {
+            background: #fff;
+        }
+        .breadcrumbs {
+            margin-top:50px;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>ご請求書</h1>
+            </div>
+        </div>
+
+        <div class="ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <table>
+                    <tr>
+                        <td>2025年6月</td>
+                        <td>11,800円</td>
+                        <td><a class="ec-inlineBtn ec-font-bold" href="">明細を確認する</a></td>
+                    </tr>
+                    <tr>
+                        <td>2025年5月</td>
+                        <td>16,200円</td>
+                        <td><a class="ec-inlineBtn ec-font-bold" href="">明細を確認する</a></td>
+                    </tr>
+                    <tr>
+                        <td>2025年4月</td>
+                        <td>12,000円</td>
+                        <td><a class="ec-inlineBtn ec-font-bold" href="">明細を確認する</a></td>
+                    </tr>
+                    <tr>
+                        <td>2025年3月</td>
+                        <td>11,800円</td>
+                        <td><a class="ec-inlineBtn ec-font-bold" href="">明細を確認する</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="ec-role ec-orderRole breadcrumbs">
+            <div class="ec-orderRole__detail">
+                <a href="/my/menu" class="ec-inlineBtn ec-font-bold"><< TOPに戻る</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

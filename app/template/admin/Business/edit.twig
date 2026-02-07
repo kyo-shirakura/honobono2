@@ -1,0 +1,325 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['business', 'business_edit'] %}
+
+{% block title %}{{ 'admin.business.registration'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.business.management'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css', 'admin') }}">
+    <style type="text/css">
+        div.form-multi {
+            display: flex;
+        }
+        div.form-multi > div {
+            margin-right: 20px;
+        }
+        .input-extension {
+            display: -webkit-box;
+        }
+        table#search_result > :not(caption) > tr.on > td {
+            box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, #ffffff))!important;
+        }
+        .c-contentsArea__cols {
+            padding: 0 15px 10px;
+        }
+        .table {
+            margin-bottom: 0px;
+        }
+        .sender_address{
+            margin: 20px 40px;
+        }
+        .c-contentsArea{
+            margin-bottom: 80px;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+
+    <!-- select2 -->
+    <script src="/html/template/admin/assets/js/jquery-3.5.1.js"></script>
+    <script src="/html/template/admin/assets/js/select2.min.js"></script>
+
+    <script>
+        $(function() {
+            // スタッフ名のサジェスト化
+            $('#admin_search_business_Customer').select2();
+            $('#admin_search_business_Staff').select2();
+        });
+
+    </script>
+
+{% endblock javascript %}
+
+{% block main %}
+    <form name="business_form" role="form" id="business_form" method="post" class="h-adr"
+          action="{%- if Business.id %}{{ url('admin_business_edit', { id : Business.id }) }}{% else %}{{ url('admin_business_new') }}{% endif -%}"
+          novalidate>
+        <span class="p-country-name" style="display:none;">Japan</span>
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.business.info'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.name'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.name) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.customer'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.Customer) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.contractor'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.contractor_id, {'attr': {'class': 'form-multi'}}) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.kind'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.kind_id, {'attr': {'class': 'form-multi'}}) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.status'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.status) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.business.invoice.sender.type'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.business.invoice.sender.type'|trans }}</span>
+                                    </div>
+                                    <div class="col-5">
+                                        {{ form_widget(form.invoice_sender_type, {'attr': {'class': 'form-multi'}}) }}
+                                    </div>
+                                </div>
+                                <div class="sender_address">
+                                    <div class="row mb-2">
+                                        <div class="col-3">
+                                            <span>{{ 'admin.business.invoice.sender.name'|trans }}</span>
+                                        </div>
+                                        <div class="col-5">
+                                            {{ form_widget(form.sender_name) }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-3">
+                                            <span>{{ 'admin.business.invoice.sender.postal_code'|trans }}</span>
+                                        </div>
+                                        <div class="col-5">
+                                            {{ form_widget(form.sender_postal_code) }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-3">
+                                            <span>{{ 'admin.business.invoice.sender.addr01'|trans }}</span>
+                                        </div>
+                                        <div class="col-5">
+                                            {{ form_widget(form.sender_addr01) }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-3">
+                                            <span>{{ 'admin.business.invoice.sender.addr02'|trans }}</span>
+                                        </div>
+                                        <div class="col-5">
+                                            {{ form_widget(form.sender_addr02) }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-3">
+                                            <span>{{ 'admin.business.invoice.sender.phone_number'|trans }}</span>
+                                        </div>
+                                        <div class="col-5">
+                                            {{ form_widget(form.sender_phone_number) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% if Business.id %}
+
+        <!-- スタッフ情報 -->
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8"><span class="card-title">{{ 'admin.business.info.staff'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <a class="btn btn-ec-regular px-5" href="{{ url('admin_business_staff_new', { bid : Business.id }) }}">
+                                        <span class="ladda-label">スタッフを追加</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% if pagination and pagination.totalItemCount %}
+                        <div class="collapse show ec-cardCollapse" id="ordererInfo">
+                            <div class="card-body">
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                    <tr>
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.status'|trans }}</th>
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.staff'|trans }}</th>
+                                        <th class="business-top-0 pt-2 pb-2 text-center" colspan=3>{{ 'admin.business.period.title'|trans }}</th>
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.regular_type'|trans }}</th>
+<!--
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.regular_week_no'|trans }}</th>
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.regular_day_of_week'|trans }}</th>
+-->
+                                        <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.fare'|trans }}</th>
+                                        <th class="binvoice-top-0 pt-2 pb-2 text-center pr-3"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for business_staff in pagination %}
+                                        {% set class_status = '' %}
+                                        {% if business_staff.period_end is empty or business_staff.period_end|date('Y/m/d') >= date()|date('Y/m/d') %}
+                                            {% set class_status = 'on' %}
+                                        {% endif %}
+
+                                        <tr class='{{ class_status }}'>
+                                            <td class="align-middle text-center">
+                                                {{ business_staff.status }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <a class="action-edit" href="{{ url('admin_staff_edit', { id : business_staff.Staff.id }) }}">{{ business_staff.Staff.name01 }} {{ business_staff.Staff.name02 }}</a>
+                                            </td>
+                                            <td class="align-middle text-center" style="white-space:nowrap">
+                                                {{ business_staff.period_start is empty ? '' : business_staff.period_start|date('Y/m/d') }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                             -
+                                            </td>
+                                            <td class="align-middle text-center" style="white-space:nowrap">
+                                                {{ business_staff.period_end is empty ? '' : business_staff.period_end|date('Y/m/d') }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{ business_staff.regular_type is empty ? '' : BusinessRegularType[business_staff.regular_type] }}
+                                            </td>
+<!--
+                                            <td class="align-middle text-center">
+                                                {{ business_staff.week_no }}
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                business_staff.day_of_week
+                                            </td>
+-->
+                                            <td class="align-middle text-center">
+                                                {{ business_staff.fare }}
+                                            </td>
+                                            <td class="align-middle text-center" style="white-space:nowrap">
+                                                <a class="action-edit" href="{{ url('admin_business_staff_edit', { bid : Business.id, id : business_staff.id }) }}">変更する</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card rounded business-0">
+                            <div class="card-body p-4">
+                                <div class="text-center text-muted mb-4 h5">{{ 'admin.business.add_staff.first'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.business.add_staff.first.message'|trans }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_business_page', { page_no : app.session.get('eccube.admin.business.search.page_no')|default('1') } ) }}?resume=1">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'admin.business.list'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}
