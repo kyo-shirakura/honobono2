@@ -94,15 +94,17 @@ file that was distributed with this source code.
                                     <tr>
 {#
                                         <td class="align-middle text-center">
-                                            {{ invoice.issue_ym|date('Y年m月') }}
+                                            {{ invoice.working_day }}
                                         </td>
 #}
                                         <td class="align-middle text-left left20">
                                             <a class="action-edit" href="{{ url('admin_customer_edit', { id : invoice.Customer.id }) }}">{{ invoice.Customer.name01 }} {{ invoice.Customer.name02 }}</a>
                                         </td>
                                         <td class="align-middle text-center" style="white-space:nowrap">
+                                            {% if invoice.Business.kind_id %}{{ BusinessKind[invoice.Business.kind_id] }}{% endif %}
                                         </td>
                                         <td class="align-middle text-center" style="white-space:nowrap">
+                                            {% if invoice.Customer.payment_type %}{{ PaymentType[invoice.Customer.payment_type] }}{% endif %}
                                         </td>
                                         <td class="align-middle text-center" style="white-space:nowrap">
                                         </td>

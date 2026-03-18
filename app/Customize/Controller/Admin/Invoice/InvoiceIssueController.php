@@ -2,6 +2,7 @@
 
 namespace Customize\Controller\Admin\Invoice;
 
+use Customize\Entity\Master\BusinessConfig;
 use Customize\Repository\InvoiceIssuedRepository;
 use Customize\Form\Type\Admin\SearchInvoiceType;
 use Customize\Repository\ReportRepository;
@@ -193,9 +194,13 @@ class InvoiceIssueController extends AbstractController
          }
          $searchData['working_ym'] = date('Y-m', strtotime('-1 month'));
          $searchData['issue_status'] = 'NULL';
-///         $qb = $this->reportRepository->getQueryBuilderForInvoiceBySearchData($searchData);
-        $qb = $this->reportRepository->getQueryBuilderByIssueData($searchData);
 
+$searchData['working_ym'] = date('Y-m', strtotime('-13 month'));
+echo '<br>working_ym: '. $searchData['working_ym'];
+//         $searchData = null;
+         $qb = $this->reportRepository->getQueryBuilderByIssueList($searchData);
+//         $qb = $this->reportRepository->getQueryBuilderBySearchData($searchData);
+//        $qb = $this->reportRepository->getQueryBuilderByIssueData($searchData);
 
          $event = new EventArgs(
              [
@@ -221,7 +226,9 @@ class InvoiceIssueController extends AbstractController
              'has_errors' => false,
              'firstAccess' => $firstAccess,
              'Customers' => $Customers,
-             'searchCustomerID' => $searchCustomerID
+             'searchCustomerID' => $searchCustomerID,
+             'BusinessKind' => BusinessConfig::BUSINESS_KIND,
+             'PaymentType' => BusinessConfig::BUSINESS_PAYMENT,
  //            'OrderStatuses' => $this->orderStatusRepository->findBy([], ['sort_no' => 'ASC']),
          ];
      }

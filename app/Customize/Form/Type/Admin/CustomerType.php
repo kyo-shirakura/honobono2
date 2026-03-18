@@ -141,6 +141,38 @@ class CustomerType extends AbstractType
                 ]
             )
 */
+            ->add('bank_name', TextType::class, [
+                'label' => 'admin.bank.name',
+                'required' => false,
+            ])
+            ->add('bank_code', TextType::class, [
+                'label' => 'admin.bank.code',
+                'required' => false,
+            ])
+            ->add('bank_branch_name', TextType::class, [
+                'label' => 'admin.bank.branch.name',
+                'required' => false,
+            ])
+            ->add('bank_branch_code', TextType::class, [
+                'label' => 'admin.bank.branch.code',
+                'required' => false,
+            ])
+            ->add('bank_account_type', TextType::class, [
+                'label' => 'admin.bank.account.type',
+                'required' => false,
+            ])
+            ->add('bank_account_number', TextType::class, [
+                'label' => 'admin.bank.account.number',
+                'required' => false,
+            ])
+            ->add('bank_account_name', TextType::class, [
+                'label' => 'admin.bank.account.name',
+                'required' => false,
+            ])
+            ->add('bank_account_name_kana', TextType::class, [
+                'label' => 'admin.bank.account.name.kana',
+                'required' => false,
+            ])
             ->add('transferee_account', TextType::class, [
                 'label' => 'admin.config.transferee_account',
                 'required' => false,
