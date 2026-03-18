@@ -93,13 +93,46 @@ class ReportRepository extends AbstractRepository
      * invoice_issued に存在しない
      * report に存在する
      */
+     public function getQueryBuilderByIssueList($searchData)
+     {
+         $qb = $this->createQueryBuilder('r');
+
+         $qb->leftJoin('Customize\Entity\InvoiceIssued', 'ii', 'WITH', 'ii.Customer = r.Customer')
+             ->where('ii.Customer IS NULL');
+
+         if ( isset($searchData['working_ym']) ) {
+             $working_ym_s = date('Y-m-d', strtotime('first day of ' . $searchData['working_ym']));
+             $working_ym_e = date('Y-m-d', strtotime('last day of ' . $searchData['working_ym']));
+             $qb
+                 ->andWhere("r.working_day >= :working_ym_s")
+                 ->andWhere("r.working_day <= :working_ym_e")
+                 ->setParameter('working_ym_s', $working_ym_s)
+                 ->setParameter('working_ym_e', $working_ym_e);
+         }
+
+         $qb->groupBy('r.Customer');
+         $qb->orderBy('r.Customer');
+
+//         echo $qb->getQuery()->getSQL();
+//         exit;
+
+         return $this->queries->customize($this->getQueryKey(), $qb, $searchData);
+     }
+
+    /*
+     * 請求暑発行
+     * invoice_issued に存在しない
+     * report に存在する
+     */
     public function getQueryBuilderByIssueData($searchData)
     {
         $qb = $this->createQueryBuilder('r');
-
-        $qb->leftJoin('Customize\Entity\InvoiceIssued', 'ii', 'WITH', 'ii.Customer = r.Customer')
-            ->where('ii.Customer IS NULL');
+//        $qb->select('r.id, r.working_day, r.working_time_start, r.working_time_end');
+        $qb->select('r.Customer');
+//        $qb->leftJoin('Customize\Entity\InvoiceIssued', 'ii', 'WITH', 'ii.Customer = r.Customer')
+//            ->where('ii.Customer IS NULL');
         // working_ym
+/*
         if ( isset($searchData['working_ym']) ) {
             $working_ym_s = date('Y-m-d', strtotime('first day of ' . $searchData['working_ym']));
             $working_ym_e = date('Y-m-d', strtotime('last day of ' . $searchData['working_ym']));
@@ -109,6 +142,8 @@ class ReportRepository extends AbstractRepository
                 ->setParameter('working_ym_s', $working_ym_s)
                 ->setParameter('working_ym_e', $working_ym_e);
         }
+*/
+//        $qb->groupBy('r.Customer, r.id, r.working_day, r.working_time_start, r.working_time_end');
         $qb->groupBy('r.Customer');
         $qb->orderBy('r.Customer');
 
@@ -131,8 +166,8 @@ order by r.customer_id;
 //        $qb->ightJoin('Customize\Entity\Report', 'r', 'WITH', 'r.Customer = ii.Customer')
 //            ->andWhere('ii.Customer IS NULL');
 
-//echo $qb->getQuery()->getSQL();
-//exit;
+echo $qb->getQuery()->getSQL();
+exit;
         //return $this->queries->customize(QueryKey::INVOICE_SEARCH, $qb, $searchData);
         return $this->queries->customize($this->getQueryKey(), $qb, $searchData);
     }

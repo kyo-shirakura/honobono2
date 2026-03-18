@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -119,6 +120,43 @@ class StaffType extends AbstractType
               'label' => 'admin.staff.access',
               'required' => false,
               //'attr' => ['readonly' => 'readonly'],
+          ])
+          ->add('bank_name', TextType::class, [
+              'label' => 'common.bank.name',
+              'required' => false,
+          ])
+          ->add('bank_code', TextType::class, [
+              'label' => 'common.bank.code',
+              'required' => false,
+          ])
+          ->add('bank_branch_name', TextType::class, [
+              'label' => 'common.bank.branch.name',
+              'required' => false,
+          ])
+          ->add('bank_branch_code', TextType::class, [
+              'label' => 'common.bank.branch.code',
+              'required' => false,
+          ])
+          ->add('bank_account_type', ChoiceType::class, [
+              'label' => 'common.bank.account.type',
+              'choices' => [
+                  '普通' => '1',
+                  '当座' => '2',
+              ],
+              'expanded' => true,
+              'multiple' => false,
+          ])
+          ->add('bank_account_number', TextType::class, [
+              'label' => 'common.bank.account.number',
+              'required' => false,
+          ])
+          ->add('bank_account_name', TextType::class, [
+              'label' => 'common.bank.account.name',
+              'required' => false,
+          ])
+          ->add('bank_account_name_kana', TextType::class, [
+              'label' => 'common.bank.account.name.kana',
+              'required' => false,
           ])
           ->add('transferee_account', TextType::class, [
               'label' => 'admin.config.transferee_account',

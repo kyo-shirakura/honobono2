@@ -167,11 +167,65 @@ file that was distributed with this source code.
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-3">
-                                        <span>{{ 'admin.customer.transferee_account'|trans }}</span>
+                                        <span>{{ 'admin.staff.transferee_account'|trans }}</span>
                                     </div>
                                     <div class="col">
-                                        {{ form_widget(form.transferee_account) }}
-                                        {{ form_errors(form.transferee_account) }}
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.name'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_name) }}
+                                                    {{ form_errors(form.bank_name) }}
+                                                </div>
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.code'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_code) }}
+                                                    {{ form_errors(form.bank_code) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.branch.name'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_branch_name) }}
+                                                    {{ form_errors(form.bank_branch_name) }}
+                                                </div>
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.branch.code'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_branch_code) }}
+                                                    {{ form_errors(form.bank_branch_code) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.account.type'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_account_type, {'attr': {'class': 'form-multi'}}) }}
+                                                    {{ form_errors(form.bank_account_type) }}
+                                                </div>
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.account.number'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_account_number) }}
+                                                    {{ form_errors(form.bank_account_number) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.account.name'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_account_name) }}
+                                                    {{ form_errors(form.bank_account_name) }}
+                                                </div>
+                                                <div class="col-auto pe-0 align-self-center"><span>{{ 'common.bank.account.name.kana'|trans }}</span></div>
+                                                <div class="col-4">
+                                                    {{ form_widget(form.bank_account_name_kana) }}
+                                                    {{ form_errors(form.bank_account_name_kana) }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
