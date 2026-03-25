@@ -30,58 +30,9 @@ class MainBank extends AbstractEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="payslip_bank_name", type="string", length=128, nullable=true)
+     * @ORM\Column(name="invoice_reg_code", type="string", length=128, nullable=true)
      */
-    private $payslip_bank_name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_code", type="string", length=16, nullable=true)
-     */
-    private $payslip_bank_code;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_branch_name", type="string", length=128, nullable=true)
-     */
-    private $payslip_bank_branch_name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_branch_code", type="string", length=16, nullable=true)
-     */
-    private $payslip_bank_branch_code;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="payslip_bank_account_type", type="integer", nullable=true)
-     */
-    private $payslip_bank_account_type;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_account_number", type="string", length=16, nullable=true)
-     */
-    private $payslip_bank_account_number;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_account_name", type="string", length=128, nullable=true)
-     */
-    private $payslip_bank_account_name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payslip_bank_account_name_kana", type="string", length=128, nullable=true)
-     */
-    private $payslip_bank_account_name_kana;
+    private $invoice_reg_code;
 
     /**
      * @var string
@@ -138,6 +89,69 @@ class MainBank extends AbstractEntity
      * @ORM\Column(name="invoice_bank_account_name_kana", type="string", length=128, nullable=true)
      */
     private $invoice_bank_account_name_kana;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_reg_code", type="string", length=128, nullable=true)
+     */
+    private $payslip_reg_code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_name", type="string", length=128, nullable=true)
+     */
+    private $payslip_bank_name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_code", type="string", length=16, nullable=true)
+     */
+    private $payslip_bank_code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_branch_name", type="string", length=128, nullable=true)
+     */
+    private $payslip_bank_branch_name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_branch_code", type="string", length=16, nullable=true)
+     */
+    private $payslip_bank_branch_code;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="payslip_bank_account_type", type="integer", nullable=true)
+     */
+    private $payslip_bank_account_type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_account_number", type="string", length=16, nullable=true)
+     */
+    private $payslip_bank_account_number;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_account_name", type="string", length=128, nullable=true)
+     */
+    private $payslip_bank_account_name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="payslip_bank_account_name_kana", type="string", length=128, nullable=true)
+     */
+    private $payslip_bank_account_name_kana;
 
     /**
      * @var boolean
@@ -206,6 +220,30 @@ class MainBank extends AbstractEntity
     public function getPayslipBankName()
     {
         return $this->payslip_bank_name;
+    }
+
+    /**
+     * Set payslip_reg_code.
+     *
+     * @param string $payslip_reg_code
+     *
+     * @return string
+     */
+    public function setPayslipRegCode($payslip_reg_code)
+    {
+        $this->payslip_reg_code = $payslip_reg_code;
+
+        return $this;
+    }
+
+    /**
+     * Get payslip_reg_code.
+     *
+     * @return string
+     */
+    public function getPayslipRegCode()
+    {
+        return $this->payslip_reg_code;
     }
 
     /**
@@ -377,195 +415,219 @@ class MainBank extends AbstractEntity
     }
 
     /**
-     * Set payslip_bank_name.
+     * Set invoice_reg_code.
      *
-     * @param string $payslip_bank_name
+     * @param string $invoice_reg_code
      *
      * @return string
      */
-    public function setInvoiceBankName($payslip_bank_name)
+    public function setInvoiceRegCode($invoice_reg_code)
     {
-        $this->payslip_bank_name = $payslip_bank_name;
+        $this->invoice_reg_code = $invoice_reg_code;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_name.
+     * Get invoice_reg_code.
+     *
+     * @return string
+     */
+    public function getInvoiceRegCode()
+    {
+        return $this->invoice_reg_code;
+    }
+
+    /**
+     * Set invoice_bank_name.
+     *
+     * @param string $invoice_bank_name
+     *
+     * @return string
+     */
+    public function setInvoiceBankName($invoice_bank_name)
+    {
+        $this->invoice_bank_name = $invoice_bank_name;
+
+        return $this;
+    }
+
+    /**
+     * Get invoice_bank_name.
      *
      * @return string
      */
     public function getInvoiceBankName()
     {
-        return $this->payslip_bank_name;
+        return $this->invoice_bank_name;
     }
 
     /**
-     * Set payslip_bank_code.
+     * Set invoice_bank_code.
      *
-     * @param string $payslip_bank_code
+     * @param string $invoice_bank_code
      *
      * @return string
      */
-    public function setInvoiceBankCode($payslip_bank_code)
+    public function setInvoiceBankCode($invoice_bank_code)
     {
-        $this->payslip_bank_code = $payslip_bank_code;
+        $this->invoice_bank_code = $invoice_bank_code;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_code.
+     * Get invoice_bank_code.
      *
      * @return string
      */
     public function getInvoiceBankCode()
     {
-        return $this->payslip_bank_code;
+        return $this->invoice_bank_code;
     }
 
     /**
-     * Set payslip_bank_branch_name.
+     * Set invoice_bank_branch_name.
      *
-     * @param string $payslip_bank_branch_name
+     * @param string $invoice_bank_branch_name
      *
      * @return string
      */
-    public function setInvoiceBankBranchName($payslip_bank_branch_name)
+    public function setInvoiceBankBranchName($invoice_bank_branch_name)
     {
-        $this->payslip_bank_branch_name = $payslip_bank_branch_name;
+        $this->invoice_bank_branch_name = $invoice_bank_branch_name;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_branch_name.
+     * Get invoice_bank_branch_name.
      *
      * @return string
      */
     public function getInvoiceBankBranchName()
     {
-        return $this->payslip_bank_branch_name;
+        return $this->invoice_bank_branch_name;
     }
 
     /**
-     * Set payslip_bank_branch_code.
+     * Set invoice_bank_branch_code.
      *
-     * @param string $payslip_bank_branch_code
+     * @param string $invoice_bank_branch_code
      *
      * @return string
      */
-    public function setInvoiceBankBranchCode($payslip_bank_branch_code)
+    public function setInvoiceBankBranchCode($invoice_bank_branch_code)
     {
-        $this->payslip_bank_branch_code = $payslip_bank_branch_code;
+        $this->invoice_bank_branch_code = $invoice_bank_branch_code;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_branch_code.
+     * Get invoice_bank_branch_code.
      *
      * @return string
      */
     public function getInvoiceBankBranchCode()
     {
-        return $this->payslip_bank_branch_code;
+        return $this->invoice_bank_branch_code;
     }
 
     /**
-     * Set payslip_bank_account_type.
+     * Set invoice_bank_account_type.
      *
      * @param integer|null $purchasePrice
      *
      * @return integer
      */
-    public function setInvoiceBankAccountType($payslip_bank_account_type = null)
+    public function setInvoiceBankAccountType($invoice_bank_account_type = null)
     {
-        $this->payslip_bank_account_type = $payslip_bank_account_type;
+        $this->invoice_bank_account_type = $invoice_bank_account_type;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_account_type.
+     * Get invoice_bank_account_type.
      *
      * @return integer
      */
     public function getInvoiceBankAccountType()
     {
-        return $this->payslip_bank_account_type;
+        return $this->invoice_bank_account_type;
     }
 
     /**
-     * Set payslip_bank_account_number.
+     * Set invoice_bank_account_number.
      *
-     * @param string $payslip_bank_account_number
+     * @param string $invoice_bank_account_number
      *
      * @return string
      */
-    public function setInvoiceBankAccountNumber($payslip_bank_account_number)
+    public function setInvoiceBankAccountNumber($invoice_bank_account_number)
     {
-        $this->payslip_bank_account_number = $payslip_bank_account_number;
+        $this->invoice_bank_account_number = $invoice_bank_account_number;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_account_number.
+     * Get invoice_bank_account_number.
      *
      * @return string
      */
     public function getInvoiceBankAccountNumber()
     {
-        return $this->payslip_bank_account_number;
+        return $this->invoice_bank_account_number;
     }
 
     /**
-     * Set payslip_bank_account_name.
+     * Set invoice_bank_account_name.
      *
-     * @param string $payslip_bank_account_name
+     * @param string $invoice_bank_account_name
      *
      * @return string
      */
-    public function setInvoiceBankAccountName($payslip_bank_account_name)
+    public function setInvoiceBankAccountName($invoice_bank_account_name)
     {
-        $this->payslip_bank_account_name = $payslip_bank_account_name;
+        $this->invoice_bank_account_name = $invoice_bank_account_name;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_account_name.
+     * Get invoice_bank_account_name.
      *
      * @return string
      */
     public function getInvoiceBankAccountName()
     {
-        return $this->payslip_bank_account_name;
+        return $this->invoice_bank_account_name;
     }
 
     /**
-     * Set payslip_bank_account_name_kana.
+     * Set invoice_bank_account_name_kana.
      *
-     * @param string $payslip_bank_account_name_kana
+     * @param string $invoice_bank_account_name_kana
      *
      * @return string
      */
-    public function setInvoiceBankAccountNameKana($payslip_bank_account_name_kana)
+    public function setInvoiceBankAccountNameKana($invoice_bank_account_name_kana)
     {
-        $this->payslip_bank_account_name_kana = $payslip_bank_account_name_kana;
+        $this->invoice_bank_account_name_kana = $invoice_bank_account_name_kana;
 
         return $this;
     }
 
     /**
-     * Get payslip_bank_account_name_kana.
+     * Get invoice_bank_account_name_kana.
      *
      * @return string
      */
     public function getInvoiceBankAccountNameKana()
     {
-        return $this->payslip_bank_account_name_kana;
+        return $this->invoice_bank_account_name_kana;
     }
 
     /**
