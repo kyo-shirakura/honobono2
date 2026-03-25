@@ -7,6 +7,7 @@ common.menu.title: さん、おつかれさまです
 #------------------------------------------------------------------------------------
 # 管理画面：銀行
 #------------------------------------------------------------------------------------
+common.bank: 銀行口座
 common.bank.name: 銀行名
 common.bank.code: 銀行コード
 common.bank.branch.name: 支店名
@@ -15,6 +16,10 @@ common.bank.account.type: 口座種別
 common.bank.account.number: 口座番号
 common.bank.account.name: 名義人
 common.bank.account.name.kana: 名義人（ｶﾅ）
+common.bank.invoice: 請求振替用
+common.bank.payslip: 給与振込用
+common.reg.code.invoice: 委任者コード
+common.reg.code.payslip: 登録番号
 
 #------------------------------------------------------------------------------------
 # 管理画面のみ
