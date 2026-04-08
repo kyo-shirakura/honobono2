@@ -1,0 +1,168 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'report' %}
+
+{% set body_class = 'report' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        table td {
+            background: #eee;
+            padding: 10px;
+        }
+        table tr:nth-child(odd) td {
+            background: #fff;
+        }
+        .breadcrumbs {
+            margin-top:50px;
+        }
+        .btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.42857142;
+            color: var(--bs-body-color);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: var(--bs-body-bg);
+            background-clip: padding-box;
+            border: var(--bs-border-width) solid var(--bs-border-color);
+            border-radius: var(--bs-border-radius);
+        }
+        form {
+            padding-bottom: 10px;
+        }
+
+        @media screen and (max-width: 480px) {
+    	/* 480px以下に適用されるCSS（スマホ用） */
+            .mrow-80{
+                width: 80px;
+            }
+            .mrow-150{
+                width: 150px;
+            }
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ 'front.mypage.nav.business'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+
+        {% set remessage = false %}
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+
+                <form name="search_form" id="search_form" method="POST" action="{{ url('mypage_report') }}">
+                    <div class="c-outsideBlock__contents">
+                        <div class="row">
+                            {{ form_widget(searchForm._token) }}
+                            <div class="col-1 mrow-80">
+                                <div>
+                                    <label class="col-form-label">{{ 'admin.report.working_ym'|trans }}</label>
+                                </div>
+                            </div>
+                            <div class="col-2 mrow-150">
+                                <div>
+                                    {{ form_widget(searchForm.working_ym) }}
+                                    {{ form_errors(searchForm.working_ym) }}
+                                </div>
+                            </div>
+                            <div class="col-6 mrow-150">
+                                <button class="btn ec-inlineBtn ec-font-bold px-5" type="submit" id="search_submit">{{ 'admin.common.search'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="c-primaryCol">
+                    {% if pagination and pagination.totalItemCount %}
+                        <div class="card rounded report-0 mb-4 d-block">
+                            <div class="card-body p-0">
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                    <tr>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.staff'|trans }}</th>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_day'|trans }}</th>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_start'|trans }} - {{ 'admin.report.working_time_end'|trans }}</th>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_break'|trans }}</th>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.working_time_total'|trans }}</th>
+                                        <th class="report-top-0 pt-2 pb-2 text-center">{{ 'admin.report.remark'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for report in pagination %}
+                                        {% if report.CancelKind %}
+                                        <tr class="cancel">
+                                        {% else %}
+                                        <tr>
+                                        {% endif %}
+                                            <td class="align-middle text-left">
+                                                {{ report.Staff.name01 }} {{ report.Staff.name02 }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{ report.working_day | replace({ '-': '/' }) | trans }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{ report.working_time_start }} - {{ report.working_time_end }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{ report.working_time_break is empty ? '-' : report.working_time_break }}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{ report.working_time_total | trans }}
+                                            </td>
+                                            <td class="align-middle text-left">
+                                                {{ report.remark | length > 20 ? report.remark|slice(0, 20) ~ '…' : report.remark }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                                <div class="row justify-content-md-center mb-4"></div>
+                            </div>
+                            <div class="row justify-content-md-center mb-4">
+                                {% if pagination.totalItemCount > 0 %}
+                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_report_page' } %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card rounded report-0">
+                            <div class="card-body p-4">
+                                <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="ec-role ec-orderRole">
+            <div class="ec-orderRole__detail">
+                <a href="{{ url('mypage') }}" class="ec-inlineBtn ec-font-bold">{{ 'common.back'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

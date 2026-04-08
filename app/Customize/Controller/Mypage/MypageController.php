@@ -2,22 +2,15 @@
 
 namespace Customize\Controller\Mypage;
 
+use Customize\Form\Type\Admin\SearchReportType;
+use Customize\Repository\ReportRepository;
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
-use Eccube\Entity\Order;
-use Eccube\Entity\Product;
 use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
-use Eccube\Exception\CartException;
 use Eccube\Form\Type\Front\CustomerLoginType;
 use Eccube\Repository\BaseInfoRepository;
-use Eccube\Repository\CustomerFavoriteProductRepository;
-use Eccube\Repository\OrderRepository;
-use Eccube\Repository\ProductRepository;
-use Eccube\Service\CartService;
-use Eccube\Service\PurchaseFlow\PurchaseContext;
-use Eccube\Service\PurchaseFlow\PurchaseFlow;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,56 +22,27 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class MypageController extends AbstractController
 {
     /**
-     * @var ProductRepository
-     */
-    protected $productRepository;
-
-    /**
-     * @var CustomerFavoriteProductRepository
-     */
-    protected $customerFavoriteProductRepository;
-
-    /**
      * @var BaseInfo
      */
     protected $BaseInfo;
 
     /**
-     * @var CartService
+     * @var ReportRepository
      */
-    protected $cartService;
-
-    /**
-     * @var OrderRepository
-     */
-    protected $orderRepository;
-
-    /**
-     * @var PurchaseFlow
-     */
-    protected $purchaseFlow;
+    protected $reportRepository;
 
     /**
      * MypageController constructor.
      *
-     * @param OrderRepository $orderRepository
-     * @param CustomerFavoriteProductRepository $customerFavoriteProductRepository
-     * @param CartService $cartService
      * @param BaseInfoRepository $baseInfoRepository
-     * @param PurchaseFlow $purchaseFlow
+     * @param ReportRepository $reportRepository
      */
     public function __construct(
-        OrderRepository $orderRepository,
-        CustomerFavoriteProductRepository $customerFavoriteProductRepository,
-        CartService $cartService,
         BaseInfoRepository $baseInfoRepository,
-        PurchaseFlow $purchaseFlow
+        ReportRepository $reportRepository
     ) {
-        $this->orderRepository = $orderRepository;
-        $this->customerFavoriteProductRepository = $customerFavoriteProductRepository;
         $this->BaseInfo = $baseInfoRepository->get();
-        $this->cartService = $cartService;
-        $this->purchaseFlow = $purchaseFlow;
+        $this->reportRepository = $reportRepository;
     }
 
     /**
@@ -160,6 +124,53 @@ class MypageController extends AbstractController
 
         return [
             'pagination' => $pagination,
+        ];
+    }
+
+    /**
+     * 業務報告一覧.
+     *
+     * @Route("/mypage/report", name="mypage_report", methods={"GET", "POST"})
+     * @Template("Mypage/report_list.twig")
+     */
+    public function report(Request $request, PaginatorInterface $paginator)
+    {
+        if (!$this->BaseInfo->isOptionFavoriteProduct()) {
+            throw new NotFoundHttpException();
+        }
+        // 顧客情報取得
+        $Customer = $this->getUser();
+
+        $builder = $this->formFactory
+            ->createBuilder(SearchReportType::class);
+        $searchForm = $builder->getForm();
+        $searchData = [];
+
+        if ('POST' === $request->getMethod()) {
+            $searchForm->handleRequest($request);
+            $searchData = $searchForm->getData();
+        }
+
+        // 業務報告取得
+        $searchData['Customer'] = $Customer;
+        if( !isset($searchData['working_ym']) ){
+            $searchData['working_ym'] = new \DateTime();
+        }
+
+        $qb = $this->reportRepository->getQueryBuilderBySearchData($searchData);
+        $pagination = $paginator->paginate(
+            $qb,
+            $request->get('pageno', 1),
+            $this->eccubeConfig['eccube_search_pmax'],
+            ['wrap-queries' => true]
+        );
+
+        return [
+            'searchForm' => $searchForm->createView(),
+            'searchData' => $searchData,
+            'pagination' => $pagination,
+            'page_no' => $request->get('pageno', 1),
+            'Customer' => $Customer,
         ];
     }
 

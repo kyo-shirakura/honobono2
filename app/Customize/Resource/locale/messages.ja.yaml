@@ -332,6 +332,7 @@ admin.business_plan.basic_time.blank: __
 front.mypage.nav.top: HOME
 front.mypage.nav.invoice: ご請求情報
 front.mypage.nav.business: ご契約情報
+front.mypage.nav.report: スタッフからの業務報告
 
 front.report.registration: 業務報告登録
 front.report.complete: 業務報告完了

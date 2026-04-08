@@ -4,10 +4,12 @@ namespace Customize\Controller;
 use Customize\Entity\Business;
 use Customize\Entity\Report;
 use Customize\Entity\Staff;
+use Customize\Form\Type\Admin\SearchReportType;
 use Customize\Form\Type\Front\StaffLoginType;
 use Customize\Form\Type\Front\StaffReportType;
 use Customize\Repository\StaffRepository;
 use Customize\Repository\BusinessRepository;
+use Customize\Repository\ReportRepository;
 use Customize\Repository\Master\SafetyConfirmationRepository;
 use Customize\Repository\Master\WorkDetailsRepository;
 use Customize\Service\FileUploader;
@@ -18,6 +20,8 @@ use Eccube\Service\MailService;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\MailTemplateRepository;
+use Eccube\Repository\Master\PageMaxRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormBuilder;
@@ -39,6 +43,11 @@ class StaffController extends AbstractController
     protected $authenticationUtils;
 
     /**
+     * @var PageMaxRepository
+     */
+    protected $pageMaxRepository;
+
+    /**
      * @var BusinessRepository
      */
     protected $businessRepository;
@@ -52,6 +61,11 @@ class StaffController extends AbstractController
      * @var StaffRepository
      */
     protected $staffRepository;
+
+    /**
+     * @var ReportRepository
+     */
+    protected $reportRepository;
 
     /**
      * @var SafetyConfirmationRepository
@@ -91,8 +105,10 @@ class StaffController extends AbstractController
     /**
      * StaffController constructor.
      *
+     * @param PageMaxRepository $pageMaxRepository
      * @param StaffRepository $staffRepository
      * @param SafetyConfirmationRepository $safetyConfirmationRepository
+     * @param ReportRepository $reportRepository
      * @param WorkDetailsRepository $workDetailsRepository
      */
     public function __construct(
@@ -101,6 +117,8 @@ class StaffController extends AbstractController
         CustomerRepository $customerRepository,
         StaffRepository $staffRepository,
         SafetyConfirmationRepository $safetyConfirmationRepository,
+        PageMaxRepository $pageMaxRepository,
+        ReportRepository $reportRepository,
         WorkDetailsRepository $workDetailsRepository,
         BaseInfoRepository $baseInfoRepository,
         MailService $mailService,
@@ -113,6 +131,8 @@ class StaffController extends AbstractController
         $this->customerRepository = $customerRepository;
         $this->staffRepository = $staffRepository;
         $this->safetyConfirmationRepository = $safetyConfirmationRepository;
+        $this->pageMaxRepository = $pageMaxRepository;
+        $this->reportRepository = $reportRepository;
         $this->workDetailsRepository = $workDetailsRepository;
         $this->BaseInfo = $baseInfoRepository->get();
         $this->mailService = $mailService;
@@ -195,6 +215,81 @@ class StaffController extends AbstractController
          return [
              'Staff' => $Staff,
              'Business' => $Business,
+         ];
+
+     }
+
+     /**
+      * 業務報告一覧.
+      *
+      * @Route("/staff/report_list", name="staff_report_list", methods={"GET", "POST"})
+      * @Route("/staff/report_list/page/{page_no}", requirements={"page_no" = "\d+"}, name="staff_report_list_page", methods={"GET", "POST"})
+      * @Template("Staff/report_list.twig")
+      */
+     public function report_list(Request $request, PaginatorInterface $paginator, $page_no = null)
+     {
+         if(! $this->loginCheck( $request ) ) return $this->redirectToRoute('staff_login');
+
+         $builder = $this->formFactory
+             ->createBuilder(SearchReportType::class);
+         $searchForm = $builder->getForm();
+         $searchData = [];
+
+         /**
+          * ページの表示件数は, 以下の順に優先される.
+          * - リクエストパラメータ
+          * - セッション
+          * - デフォルト値
+          * また, セッションに保存する際は mtb_page_maxと照合し, 一致した場合のみ保存する.
+          **/
+         $page_count = $this->session->get('eccube.admin.report.search.page_count',
+             $this->eccubeConfig->get('eccube_default_page_count'));
+
+         $page_count_param = (int) $request->get('page_count');
+         $pageMaxis = $this->pageMaxRepository->findAll();
+
+         if ($page_count_param) {
+             foreach ($pageMaxis as $pageMax) {
+                 if ($page_count_param == $pageMax->getName()) {
+                     $page_count = $pageMax->getName();
+                     $this->session->set('eccube.admin.report.search.page_count', $page_count);
+                     break;
+                 }
+             }
+         }
+
+         if ('POST' === $request->getMethod()) {
+             $searchForm->handleRequest($request);
+             $searchData = $searchForm->getData();
+         }
+
+         // スタッフ情報取得
+         $staff_id = $this->session->get('eccube.front.mypage.staff.id', null);
+         $Staff = $this->staffRepository->find($staff_id);
+         // 業務報告取得
+         $searchData['Staff'] = $Staff;
+         if( !isset($searchData['working_ym']) ){
+             $searchData['working_ym'] = new \DateTime();
+         }
+         $qb = $this->reportRepository->getQueryBuilderBySearchData($searchData);
+         if( $page_no == null ){
+             $page_no = 1;
+         }
+
+         $pagination = $paginator->paginate(
+             $qb,
+             $page_no,
+             $page_count
+         );
+
+         return [
+             'searchForm' => $searchForm->createView(),
+             'searchData' => $searchData,
+             'pagination' => $pagination,
+             'pageMaxis' => $pageMaxis,
+             'page_no' => $page_no,
+             'page_count' => $page_count,
+             'Staff' => $Staff,
          ];
 
      }
