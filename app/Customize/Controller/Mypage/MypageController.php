@@ -104,26 +104,7 @@ class MypageController extends AbstractController
             ->getFilters()
             ->enable('incomplete_order_status_hidden');
 
-        // paginator
-        $qb = $this->orderRepository->getQueryBuilderByCustomer($Customer);
-
-        $event = new EventArgs(
-            [
-                'qb' => $qb,
-                'Customer' => $Customer,
-            ],
-            $request
-        );
-        $this->eventDispatcher->dispatch($event, EccubeEvents::FRONT_MYPAGE_MYPAGE_INDEX_SEARCH);
-
-        $pagination = $paginator->paginate(
-            $qb,
-            $request->get('pageno', 1),
-            $this->eccubeConfig['eccube_search_pmax']
-        );
-
         return [
-            'pagination' => $pagination,
         ];
     }
 
