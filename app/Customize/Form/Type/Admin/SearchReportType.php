@@ -93,7 +93,8 @@ class SearchReportType extends AbstractType
             'label' => 'admin.report.working_ym',
             'required' => false,
             'widget' => 'single_text',
-            'html5' => false
+            'html5' => false,
+            'data' => new \DateTime('now')
 //            //'attr' => ['readonly' => 'readonly'],
         ])
         // ソート用

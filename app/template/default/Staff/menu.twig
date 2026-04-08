@@ -1,6 +1,6 @@
 {% extends 'default_frame.twig' %}
 
-{% set body_class = 'staffpage' %}
+{% set body_class = 'staff_menu' %}
 
 {% block stylesheet %}
     <style type="text/css">
@@ -24,6 +24,9 @@
         .menu-payslip {
             background: #d9dfff;
         }
+        .menu-report-list img{
+            padding: 15px;
+        }
 
         @media screen and (max-width: 480px) {
     	/* 480px以下に適用されるCSS（スマホ用） */
@@ -38,7 +41,7 @@
             }
             .menu-report,
             .menu-payslip {
-                height: 220px;
+                height: 200px;
             }
         }
     </style>
@@ -52,17 +55,27 @@
         <div class="ec-off2Grid">
             <div class="ec-off2Grid__cell">
                 <div class="ec-login menu-list">
+                    <div class="menu-icon menu-report menu-report-list">
+                        <a href="{{ url('staff_report_list') }}">
+                            <img src="{{ asset('assets/img/common/staff-report-list.png', 'user_data') }}" />
+                            <div>業務報告一覧</div>
+                        </a>
+                    </div>
                     <div class="menu-icon menu-report">
                         <a href="{{ url('staff_report') }}">
                             <img src="{{ asset('assets/img/common/staff-report.png', 'user_data') }}" />
-                            <div>業務報告を送る</div>
+                            <div>業務報告送信</div>
                         </a>
                     </div>
+                </div>
+                <div class="ec-login menu-list">
                     <div class="menu-icon menu-payslip">
                         <a href="{{ url('staff_payslip') }}">
                             <img src="{{ asset('assets/img/common/staff-payslip.png', 'user_data') }}" />
-                            <div>給与明細を見る</div>
+                            <div>給与明細</div>
                         </a>
+                    </div>
+                    <div class="menu-icon">
                     </div>
                 </div>
             </div>
