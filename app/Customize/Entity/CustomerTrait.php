@@ -84,6 +84,13 @@ trait CustomerTrait
     private $bank_account_name_kana;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="support_ticket_user", type="integer", nullable=true)
+     */
+    private $support_ticket_user;
+
+    /**
      * Set payment_type.
      *
      * @param integer|null $purchasePrice
@@ -322,5 +329,30 @@ trait CustomerTrait
     {
         return $this->bank_account_name_kana;
     }
+
+    /**
+     * Set support_ticket_user.
+     *
+     * @param integer|null $purchasePrice
+     *
+     * @return integer
+     */
+    public function setSupportTicketUser($support_ticket_user = null)
+    {
+        $this->support_ticket_user = $support_ticket_user;
+
+        return $this;
+    }
+
+    /**
+     * Get support_ticket_user.
+     *
+     * @return integer|null
+     */
+    public function getSupportTicketUser()
+    {
+        return $this->support_ticket_user;
+    }
+
 
 }

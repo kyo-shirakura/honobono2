@@ -177,6 +177,13 @@ class CustomerType extends AbstractType
                 'label' => 'admin.config.transferee_account',
                 'required' => false,
             ])
+            ->add('support_ticket_user', ChoiceType::class, [
+                'label' => 'common.support.ticket',
+                'choices' => ['利用なし' => 0, '利用あり' => 1],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => true,
+            ])
             ->add('note', TextareaType::class, [
                 'required' => false,
                 'constraints' => [
