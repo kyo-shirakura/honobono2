@@ -10,14 +10,22 @@ file that was distributed with this source code.
 #}
 <div class="ec-navlistRole">
     <ul class="ec-navlistRole__navlist">
+{#
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'index' %}active{% endif %}">
             <a href="{{ url('mypage') }}">{{ 'front.mypage.nav.top'|trans }}</a>
         </li>
+#}
+        <li class="ec-navlistRole__item {% if mypageno|default('') == 'invoice_new' %}active{% endif %}">
+            <a href="{{ url('mypage_invoice') }}?t=new">{{ 'front.mypage.nav.invoice.new'|trans }}</a>
+        </li>
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'invoice' %}active{% endif %}">
-            <a href="{{ url('mypage_invoice') }}">{{ 'front.mypage.nav.invoice'|trans }}</a>
+            <a href="{{ url('mypage_invoice') }}">{{ 'front.mypage.nav.invoice.list'|trans }}</a>
         </li>
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'report' %}active{% endif %}">
             <a href="{{ url('mypage_report') }}">{{ 'front.mypage.nav.report'|trans }}</a>
+        </li>
+        <li class="ec-navlistRole__item {% if mypageno|default('') == 'business' %}active{% endif %}">
+            <a href="{{ url('mypage_business') }}">{{ 'front.mypage.nav.business'|trans }}</a>
         </li>
     </ul>
 </div>

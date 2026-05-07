@@ -2,8 +2,13 @@
 
 namespace Customize\Controller\Mypage;
 
+use Customize\Entity\Business;
+use Customize\Entity\Master\BusinessConfig;
 use Customize\Form\Type\Admin\SearchReportType;
+use Customize\Repository\BusinessRepository;
+use Customize\Repository\BusinessPlanRepository;
 use Customize\Repository\ReportRepository;
+use Customize\Repository\StaffRepository;
 use Eccube\Controller\AbstractController;
 use Eccube\Entity\BaseInfo;
 use Eccube\Entity\Customer;
@@ -11,6 +16,7 @@ use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
 use Eccube\Form\Type\Front\CustomerLoginType;
 use Eccube\Repository\BaseInfoRepository;
+use Eccube\Repository\CustomerRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +33,21 @@ class MypageController extends AbstractController
     protected $BaseInfo;
 
     /**
+     * @var BusinessRepository
+     */
+    protected $businessRepository;
+
+    /**
+     * @var BusinessPlanRepository
+     */
+    protected $businessPlanRepository;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
      * @var ReportRepository
      */
     protected $reportRepository;
@@ -35,14 +56,24 @@ class MypageController extends AbstractController
      * MypageController constructor.
      *
      * @param BaseInfoRepository $baseInfoRepository
+     * @param BusinessPlanRepository $businessPlanRepository
+     * @param CustomerRepository $customerRepository
      * @param ReportRepository $reportRepository
      */
     public function __construct(
         BaseInfoRepository $baseInfoRepository,
-        ReportRepository $reportRepository
+        BusinessRepository $businessRepository,
+        BusinessPlanRepository $businessPlanRepository,
+        CustomerRepository $customerRepository,
+        ReportRepository $reportRepository,
+        StaffRepository $staffRepository
     ) {
         $this->BaseInfo = $baseInfoRepository->get();
+        $this->businessRepository = $businessRepository;
+        $this->businessPlanRepository = $businessPlanRepository;
+        $this->customerRepository = $customerRepository;
         $this->reportRepository = $reportRepository;
+        $this->staffRepository = $staffRepository;
     }
 
     /**
@@ -158,7 +189,7 @@ class MypageController extends AbstractController
     /**
      * 契約情報を表示する.
      *
-     * @Route("/mypage/favorite", name="mypage_business", methods={"GET"})
+     * @Route("/mypage/business", name="mypage_business", methods={"GET"})
      * @Template("Mypage/business.twig")
      */
     public function business(Request $request, PaginatorInterface $paginator)
@@ -168,27 +199,28 @@ class MypageController extends AbstractController
         }
         $Customer = $this->getUser();
 
-        // paginator
-        $qb = $this->customerFavoriteProductRepository->getQueryBuilderByCustomer($Customer);
+        // 案件を取得
+        $Business = $this->businessRepository->findBy( array( 'Customer' => $Customer , 'Status' => array(3,4) ), ['id' => 'ASC']);
+        $BusinessRow = $this->businessRepository->findOneBy( array( 'Customer' => $Customer , 'Status' => array(3,4) ), ['id' => 'ASC']);
+        if(! $Business ){
+            throw new NotFoundHttpException();
+        }
 
-        $event = new EventArgs(
-            [
-                'qb' => $qb,
-                'Customer' => $Customer,
-            ],
-            $request
-        );
-        $this->eventDispatcher->dispatch($event, EccubeEvents::FRONT_MYPAGE_MYPAGE_FAVORITE_SEARCH);
-
-        $pagination = $paginator->paginate(
-            $qb,
-            $request->get('pageno', 1),
-            $this->eccubeConfig['eccube_search_pmax'],
-            ['wrap-queries' => true]
-        );
+        // 基本料金を取得
+        $BusinessPlan = $this->businessPlanRepository->getActivePlan([
+            'contractor_id' => $BusinessRow->getContractorId()   // 契約対象(法人/個人)
+            ,'kind_id' => $BusinessRow->getKindId() // 契約種類(定期/単発)
+        ]);
 
         return [
-            'pagination' => $pagination,
+            'Business' => $Business,
+            'Customer' => $Customer,
+            'BusinessPlan' => $BusinessPlan,
+            'BusinessConstractors' => BusinessConfig::BUSINESS_CONTRACTOR,
+            'BusinessKinds' => BusinessConfig::BUSINESS_KIND,
+            'BusinessRegularType' => BusinessConfig::BUSINESS_REGULAR_TYPE,
+            'BusinessWeekly' => BusinessConfig::BUSINESS_WEEKLY,
+            'PaymentType' => BusinessConfig::BUSINESS_PAYMENT,
         ];
     }
 

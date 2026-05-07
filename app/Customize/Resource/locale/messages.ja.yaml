@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------------
 common.system.title: 【ほのぼのビジョン】システム
 common.menu.title: さん、おつかれさまです
+common.support.ticket: 応援券
 
 #------------------------------------------------------------------------------------
 # 管理画面：銀行
@@ -330,7 +331,8 @@ admin.business_plan.basic_time.blank: __
 # フロント：メッセージ
 #------------------------------------------------------------------------------------
 front.mypage.nav.top: HOME
-front.mypage.nav.invoice: ご請求情報
+front.mypage.nav.invoice.list: ご請求一覧
+front.mypage.nav.invoice.new: 最新のご請求書
 front.mypage.nav.business: ご契約情報
 front.mypage.nav.report: スタッフからの業務報告
 
