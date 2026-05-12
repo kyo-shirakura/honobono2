@@ -196,6 +196,8 @@ file that was distributed with this source code.
                 {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
             </div>
 -->
+            {{ form_widget(searchForm.sortkey, {'attr': {'class': 'js-listSort-key'}}) }}
+            {{ form_widget(searchForm.sorttype, {'attr': {'class': 'js-listSort-type'}}) }}
         </form>
     </div>
     <!--検索条件設定テーブルここまで-->

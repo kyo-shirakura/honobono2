@@ -136,6 +136,11 @@ class BusinessStaffType extends AbstractType
               'required' => false,
               //'attr' => ['readonly' => 'readonly'],
           ])
+          ->add('working_time_other', TextareaType::class, [
+              'label' => '',
+              'required' => false,
+              //'attr' => ['readonly' => 'readonly'],
+          ])
           ->add('remark', TextareaType::class, [
               'required' => false,
               //'attr' => ['readonly' => 'readonly'],

@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -169,6 +170,15 @@ class StaffType extends AbstractType
                       'max' => $this->eccubeConfig['eccube_ltext_len'],
                   ]),
               ],
+          ])
+          // ソート用
+          ->add('sortkey', HiddenType::class, [
+              'label' => 'admin.list.sort.key',
+              'required' => false,
+          ])
+          ->add('sorttype', HiddenType::class, [
+              'label' => 'admin.list.sort.type',
+              'required' => false,
           ])
       ;
   }

@@ -152,6 +152,8 @@ admin.business.invoice.sender.addr01: 都道府県市区町村
 admin.business.invoice.sender.addr02: 番地（マンション名）
 admin.business.invoice.sender.phone_number: 電話番号
 
+admin.business.working.other.placeholder: ※週に記載できない不定期な稼働などはこちらに記載ください
+
 #------------------------------------------------------------------------------------
 # 業務報告管理
 #------------------------------------------------------------------------------------
@@ -304,6 +306,7 @@ admin.business_plan.contractor.person: 個人
 admin.business_plan.contractor.corp: 法人
 admin.business_plan.contractor.percentage: 支払い料率
 admin.business_plan.period: 有効期間
+admin.business_plan.period.start: 契約開始日
 admin.business_plan.period_start: 有効期間（開始日）
 admin.business_plan.period_end: 有効期間（終了日）
 admin.business_plan.basic_time: 基本時間帯

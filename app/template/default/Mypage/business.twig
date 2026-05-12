@@ -8,6 +8,11 @@
 
 {% block stylesheet %}
 <style type="text/css">
+    h5 {
+        font-weight : bold;
+        text-decoration: underline;
+    }
+
     button {
         background: #ccc;
         border: solid 2px #aaa;
@@ -20,46 +25,156 @@
     button:active {
         background: #aaa;
     }
+
+    .accordion {
+      width: 100%;
+      background: #fff;
+      padding: 24px;
+      border-radius: 4px;
+    }
+
+    .accordion.active {
+        color: #fff;
+        background: #aaa;
+    }
+
+    .accordion-title {
+      color: #e25b4b;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .accordion-btn {
+      width: 100%;
+      border: none;
+      background: none;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: #e25b4b;
+      font-weight: bold;
+      text-align: left;
+
+      background: #F3F3F3;
+      padding: 8px 12px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .accordion-btn:hover,
+    .accordion-btn.active {
+        color: #fff;
+        background: #aaa;
+    }
+
+    .accordion-icon {
+      line-height: 1;
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 16px;
+      color: #555;
+      line-height: 1.8;
+      border: 1px solid #aaa;
+    }
+    @media screen and (min-width: 768px) {
+        /* 768px以上に適用されるCSS（PC用） */
+        div.qr-code img {
+            width: 650px;
+        }
+    }
 </style>
 {% endblock stylesheet %}
 
 {% block javascript %}
 <script>
     $(function () {
-      let timeMinutes = 120;                  // 初期値 2:00 → 120分
-      let basePrice = $("#basePrice").text(); // 1時間あたりの料金
-      let staffFare = $("#staffFare").text();      // 交通費
 
-      function updateDisplay() {
-        // 時間表示（mm → hh:mm）
-        let hours = Math.floor(timeMinutes / 60);
-        let minutes = timeMinutes % 60;
-        let timeText = hours + ":" + (minutes === 0 ? "00" : minutes);
-        $("#time").text(timeText);
-
-        // 合計計算
-        let total = basePrice * (timeMinutes / 60) + Number(staffFare);
-        $("#total").text(Math.floor(total).toLocaleString());
-      }
-
-      // ＋ボタン
-      $("#plus").on("click", function () {
-        timeMinutes += 15;
-        updateDisplay();
+      // 初期計算
+      $(".price-box").each(function () {
+        updateTotal($(this));
       });
 
-      // －ボタン
-      $("#minus").on("click", function () {
-        if (timeMinutes > 30) {
-          timeMinutes -= 15;
-          updateDisplay();
+      // +ボタン
+      $(document).on("click", ".plus-btn", function () {
+        const box = $(this).closest(".price-box");
+        const timeEl = box.find(".time");
+        let minutes = parseInt(timeEl.data("minutes"));
+        // 15分追加
+        minutes += 15;
+
+        updateTime(timeEl, minutes);
+        updateTotal(box);
+      });
+
+      // -ボタン
+      $(document).on("click", ".minus-btn", function () {
+        const box = $(this).closest(".price-box");
+        const timeEl = box.find(".time");
+        let minutes = parseInt(timeEl.data("minutes"));
+
+        // 下限30分
+        if (minutes <= 30) {
+          return;
+        }
+        // 15分減算
+        minutes -= 15;
+
+        updateTime(timeEl, minutes);
+        updateTotal(box);
+      });
+
+      // 時間表示更新
+      function updateTime(timeEl, minutes) {
+
+        timeEl.data("minutes", minutes);
+        const hour = Math.floor(minutes / 60);
+        const min = minutes % 60;
+        const minText = String(min).padStart(2, "0");
+        timeEl.text(hour + ":" + minText);
+      }
+
+      // 合計計算
+      function updateTotal(box) {
+        const basePrice = parseInt(
+          box.find(".base-price").data("price")
+        );
+        const minutes = parseInt(
+          box.find(".time").data("minutes")
+        );
+        const transport = parseInt(
+          box.find(".transport").text().replace("円", "")
+        );
+
+        // 時間 → 時間単位へ変換
+        const hour = minutes / 60;
+        // 基本料金 × 時間 + 交通費
+        const total = (basePrice * hour) + transport;
+
+        box.find(".total-price").text(
+          total.toLocaleString()
+        );
+      }
+
+      $('.accordion-btn').on('click', function () {
+        $('.accordion-content').slideToggle(300);
+
+        // 背景色切り替え
+        $('.accordion-btn').toggleClass('active');
+
+        const icon = $(this).find('.accordion-icon');
+
+        if (icon.text() === '＋') {
+          icon.text('－');
+        } else {
+          icon.text('＋');
         }
       });
 
-      // 初期表示
-      updateDisplay();
     });
-
 </script>
 {% endblock javascript %}
 
@@ -74,7 +189,57 @@
 
         {% set remessage = false %}
 
+        <div class="ec-orderRole">
+            <div class="accordion">
+                <div class="accordion-title">
+                  ＜応援券アプリでのお支払い＞
+                </div>
+
+                <button class="accordion-btn">
+                  <span>ご利用方法はこちらをご確認ください。</span>
+                  <span class="accordion-icon">＋</span>
+                </button>
+
+                <div class="accordion-content">
+                    <h5 class="support-title">■ 子育て応援券アプリでのお支払いについて</h5>
+
+                    <ul class="support-list">
+                        <li>1円（1ポイント）単位でお支払いいただけます。</li>
+                        <li>1回のご利用上限はこれまでと変わらず5,000円です。</li>
+                        <li>
+                            応援券アプリでの決済は、基本的にサービスご利用日の当日中にお願いいたします。<br>
+                            （当日を過ぎてしまった場合、当月内の決済であれば対応可能です。月末締めのためです。）
+                        </li>
+                        <li>
+                            当月のご利用分全額を応援券でお支払いいただいた場合は、請求書・利用明細の送付はいたしません。
+                        </li>
+                        <li>
+                            応援券アプリでの決済は、アプリを起動し、下記QRコードからお願いいたします。<br>
+                            （応援券アプリにつきましては、杉並区からご案内が届いているかと存じます）
+                        </li>
+                    </ul>
+
+                    <div class="qr-section">
+                        <h5 class="qr-title">■ QRコード</h4>
+
+                        <div class="qr-box">
+                            <!-- QRコード画像 -->
+                            <div class="qr-code">
+                                <p><a target=_blank href="http://lin.ee/h0iYq2E">こちら</a>にアクセスするか、こちらのQRコードを読み込んでください。</p>
+                                <img src="{{ asset('assets/img/common/qrcode.png', 'user_data') }}" alt="QRコード">
+                                <div class="company-name">（株）メディカルビジョン</div>
+                            </div>
+                            <div class="code">
+                                1 7 2 7 0 0 0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% for row in Business %}
+<!-- BusinessID: {{ row.id }} -->
             {% set BusinessStaff = repository('Customize\\Entity\\BusinessStaff').findOneBy({'Business':row}) %}
 
             <div class="ec-orderRole">
@@ -85,7 +250,7 @@
                     </div>
                     <div class="ec-definitions">
                         <dt>ご契約日：</dt>
-                        <dd></dd>
+                        <dd>{{ row.period_start|date('Y/m/d') }}</dd>
                     </div>
                     <div class="ec-definitions">
                         <dt>契約形態：</dt>
@@ -106,30 +271,46 @@
                     <div class="ec-definitions">
                         <dt style='vertical-align:top;'>ご契約詳細：</dt>
                         <dd>
-                            <p>
                         {% if BusinessStaff %}
+                        <!-- BusinessStaffID: {{ row.id }} -->
+                            <p>
                             {% set Weekly = ['日','月','火','水','木','金','土'] %}
-                            {% set StaffWork = repository('Customize\\Entity\\BusinessStaffWorkingTime').findBy({'Business':row, 'Staff':BusinessStaff}
+                            {% set StaffWork = repository('Customize\\Entity\\BusinessStaffWorkingTime').findBy({'Business':row, 'Staff':BusinessStaff.Staff}
                                                                                                                 ,{'day_of_week':'ASC'}) %}
                             {% for work in StaffWork %}
                                 * {{ Weekly[work.day_of_week] }}曜日: {{ work.working_time_start}} - {{ work.working_time_end}}<br>
                             {% endfor%}
-                        {% endif %}
                             </p>
+                            <p>
+                            {{  BusinessStaff.working_time_other }}
+                            </p>
+                        {% endif %}
                         </dd>
                     </div>
                     <div class="ec-definitions">
                         <dt>お支払い方法：</dt>
                         <dd>{% if Customer.payment_type %}{{ PaymentType[Customer.payment_type] }}{% endif %}</dd>
                     </div>
+                    {% if BusinessStaff %}
                     <div class="ec-definitions">
                         <dt>担当スタッフ：</dt>
                         <dd>
-                        {% if BusinessStaff %}
                             {{ BusinessStaff.Staff.name01 }} {{ BusinessStaff.Staff.name02 }}
-                        {% endif %}
                         </dd>
                     </div>
+                    <div class="ec-definitions">
+                        <dt>交通費：</dt>
+                        <dd>
+                            {{ BusinessStaff.fare }} 円
+                        </dd>
+                    </div>
+                    <div class="ec-definitions">
+                        <dt>交通経路：</dt>
+                        <dd>
+                            {{ BusinessStaff.access }}
+                        </dd>
+                    </div>
+                    {% endif %}
                 </div>
 {#
                 <div class="ec-orderPayment">
@@ -143,56 +324,43 @@
                 </div>
 #}
             </div>
-            {% if loop.index == 1 %}
             <div class="ec-orderRole__summary">
-                <div class="ec-totalBox">
+
+                <div class="price-box ec-totalBox">
+                    <!-- 1時間あたりの料金 -->
                     <dl class="ec-totalBox__spec">
                         <dt>基本料金</dt>
                         <dd>
-                            <span id="basePrice">{{ BusinessPlan ? BusinessPlan.basic_time_bill : defBasePrice }}</span>円
+                            <span class="base-price" data-price="{{ BusinessPlan ? BusinessPlan.basic_time_bill : defBasePrice }}">{{ BusinessPlan ? BusinessPlan.basic_time_bill : defBasePrice }}円</span>
                         </dd>
                     </dl>
+
                     <dl class="ec-totalBox__spec">
                         <dt>ご利用時間</dt>
-                        <dd>
-                            <span id="time">2:00</span>
+
+                        <dd class="time-controls">
+                          <span class="time" data-minutes="120">2:00</span>
                         </dd>
                     </dl>
                     <dl class="ec-totalBox__spec">
                         <dt>&nbsp;</dt>
                         <dd>
-                            <button id="plus"　class='btn_plus'>+</button>
-                            <button id="minus"　class='btn_minus'>-</button>
+                              <button class="plus-btn">+</button>
+                              <button class="minus-btn">-</button>
                         </dd>
                     </dl>
+
                     <dl class="ec-totalBox__spec">
                         <dt>スタッフ交通費</dt>
-                        <dd>
-                            <span id="staffFare">{{ BusinessStaff ? BusinessStaff.fare : 0}}</span>円<br>
-                        </dd>
+                        <span class="transport">{{ BusinessStaff ? BusinessStaff.fare : 0}}円</span>
                     </dl>
-                    <dl class="ec-totalBox__spec">
-                        <dt></dt>
-                        <dd>
-                            <span class="ec-totalBox__taxLabel">{{ BusinessStaff ? BusinessStaff.access : ''}}</span>
-                        </dd>
-                    </dl>
-                    <div class="ec-totalBox__paymentTotal">{{ 'common.total'|trans }}
-                        <span id="total" class="ec-totalBox__price"></span>円
+
+                    <div class="total ec-totalBox__paymentTotal">{{ 'common.total'|trans }}
+                        <span id="total_{{ loop.index }}" class="total-price ec-totalBox__price"></span>円
                         <span class="ec-totalBox__taxLabel">{{ 'common.tax_include'|trans }}</span>
                     </div>
                 </div>
-                <p class="ec-color-accent">
-                    <strong>
-                    ＜応援券アプリでのお支払い＞<br>
-                        ご利用方法はこちらをご確認ください。
-                    </strong>
-                    <dl style="font-size:small; padding-top:10px">
-                    <dd>※アプリでのご決済は、可能であればご利用日の当日中、難しい場合はご利用月内にお願いいたします。</dd>
-                    </dl>
-                </p>
             </div>
-            {% endif %}
         </div>
         {% endfor %}
 
