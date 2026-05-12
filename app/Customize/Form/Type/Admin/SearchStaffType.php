@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -62,41 +63,15 @@ class SearchStaffType extends AbstractType
               'expanded' => true,
               'multiple' => true,
           ])
-/*
-          ->add('sex', ChoiceType::class, [
-              'label' => 'admin.staff.sex',
-              'choices' => ['男性' => '男性', '女性' => '女性'],
-              'expanded' => true,
-              'multiple' => true,
+          // ソート用
+          ->add('sortkey', HiddenType::class, [
+              'label' => 'admin.list.sort.key',
               'required' => false,
           ])
-          ->add('birthday', TextType::class, [
-              'label' => 'admin.staff.birthday',
-              'required' => false,
-              'attr' => [
-                  'placeholder' => '例）YYYY-MM-DD',
-              ],
-          ])
-          ->add('pref', PrefType::class, [
-              'label' => 'admin.staff.pref',
+          ->add('sorttype', HiddenType::class, [
+              'label' => 'admin.list.sort.type',
               'required' => false,
           ])
-          ->add('email', TextType::class, [
-              'label' => 'admin.staff.email',
-              'required' => false,
-          ])
-          ->add('special_subject', ServicesType::class, [
-              'label' => 'admin.staff.special_subject',
-              'required' => false,
-          ])
-          ->add('blacklist', ChoiceType::class, [
-              'label' => 'admin.staff.blacklist',
-              'choices' => ['登録済み' => '1'],
-              'expanded' => true,
-              'multiple' => true,
-              'required' => false,
-          ])
-*/
       ;
   }
 

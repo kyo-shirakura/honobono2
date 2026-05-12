@@ -106,6 +106,13 @@ class BusinessStaff extends AbstractEntity
     /**
      * @var string|null
      *
+     * @ORM\Column(name="working_time_other", type="string", length=1024, nullable=true)
+     */
+    private $working_time_other;
+
+    /**
+     * @var string|null
+     *
      * @ORM\Column(name="remark", type="string", length=1024, nullable=true)
      */
     private $remark;
@@ -353,6 +360,30 @@ class BusinessStaff extends AbstractEntity
     public function getAccess()
     {
         return $this->access;
+    }
+
+    /**
+     * Set working_time_other.
+     *
+     * @param string $working_time_other
+     *
+     * @return BusinessStaff
+     */
+    public function setWorkingTimeOther($working_time_other)
+    {
+        $this->working_time_other = $working_time_other;
+
+        return $this;
+    }
+
+    /**
+     * Get working_time_other.
+     *
+     * @return string
+     */
+    public function getWorkingTimeOther()
+    {
+        return $this->working_time_other;
     }
 
     /**

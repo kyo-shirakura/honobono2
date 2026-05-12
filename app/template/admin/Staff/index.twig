@@ -180,6 +180,8 @@ file that was distributed with this source code.
                     </div>
                 </div>
             </div>
+            {{ form_widget(searchForm.sortkey, {'attr': {'class': 'js-listSort-key'}}) }}
+            {{ form_widget(searchForm.sorttype, {'attr': {'class': 'js-listSort-type'}}) }}
 {#
             <div class="c-outsideBlock__contents mb-5">
                 {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}

@@ -118,6 +118,15 @@ file that was distributed with this source code.
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-3">
+                                        <span>{{ 'admin.business_plan.period.start'|trans }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        {{ form_widget(form.period_start, { type : 'date' }) }}
+                                        {{ form_errors(form.period_start) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3">
                                         <span>{{ 'admin.business.status'|trans }}</span>
                                     </div>
                                     <div class="col-3">

@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -61,6 +62,15 @@ class SearchPayslipType extends AbstractType
               'html5' => false,
               'data' => new \DateTime('now')
   //            //'attr' => ['readonly' => 'readonly'],
+          ])
+          // ソート用
+          ->add('sortkey', HiddenType::class, [
+              'label' => 'admin.list.sort.key',
+              'required' => false,
+          ])
+          ->add('sorttype', HiddenType::class, [
+              'label' => 'admin.list.sort.type',
+              'required' => false,
           ])
       ;
   }

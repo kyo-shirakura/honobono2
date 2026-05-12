@@ -182,6 +182,8 @@ file that was distributed with this source code.
             <div class="c-outsideBlock__contents mb-5">
                 {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
             </div>
+            {{ form_widget(searchForm.sortkey, {'attr': {'class': 'js-listSort-key'}}) }}
+            {{ form_widget(searchForm.sorttype, {'attr': {'class': 'js-listSort-type'}}) }}
         </form>
     </div>
     <!--検索条件設定テーブルここまで-->
@@ -197,10 +199,10 @@ file that was distributed with this source code.
                                 <thead>
                                 <tr>
                                     <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.name'|trans }}</th>
-                                    <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.customer'|trans }}</th>
+                                    <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.customer'|trans }}<a href="#" class="js-listSort" data-sortkey="customer"><i class="fa fa-arrow-up" aria-hidden="true"></i></a></th>
                                     <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.contractor'|trans }}</th>
-                                    <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.kind'|trans }}</th>
-                                    <th class="business-top-0 pt-2 pb-2 text-center" colspan=3>{{ 'admin.business.period.title'|trans }}</th>
+                                    <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.kind'|trans }}<a href="#" class="js-listSort" data-sortkey="kind"><i class="fa fa-arrow-up" aria-hidden="true"></i></a></th>
+                                    <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business_plan.period.start'|trans }}</th>
                                     <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.status'|trans }}</th>
 <!--
                                     <th class="business-top-0 pt-2 pb-2 text-center">{{ 'admin.business.staff'|trans }}</th>
@@ -226,12 +228,14 @@ file that was distributed with this source code.
                                         <td class="align-middle text-center" style="white-space:nowrap">
                                             {{ business.period_start is empty ? '' : business.period_start|date('Y/m/d') }}
                                         </td>
+{#
                                         <td class="align-middle text-center" style="white-space:nowrap">
                                          -
                                         </td>
                                         <td class="align-middle text-center" style="white-space:nowrap">
                                             {{ business.period_end is empty ? '' : business.period_end|date('Y/m/d') }}
                                         </td>
+#}
                                         <td class="align-middle text-center">
                                             {{ business.Status }}
                                         </td>
