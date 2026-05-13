@@ -274,7 +274,7 @@
                         {% if BusinessStaff %}
                         <!-- BusinessStaffID: {{ row.id }} -->
                             <p>
-                            {% set Weekly = ['日','月','火','水','木','金','土'] %}
+                            {% set Weekly = ['日','日','月','火','水','木','金','土'] %}
                             {% set StaffWork = repository('Customize\\Entity\\BusinessStaffWorkingTime').findBy({'Business':row, 'Staff':BusinessStaff.Staff}
                                                                                                                 ,{'day_of_week':'ASC'}) %}
                             {% for work in StaffWork %}
