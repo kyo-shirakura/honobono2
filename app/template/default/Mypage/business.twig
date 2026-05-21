@@ -13,6 +13,16 @@
         text-decoration: underline;
     }
 
+    .summaryHeading dt{
+        font-weight: bold;
+        text-decoration: underline;
+        font-size: 1.2em;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+    .summaryHeading dd{
+        font-size: 0.9em;
+    }
     button {
         background: #ccc;
         border: solid 2px #aaa;
@@ -24,6 +34,10 @@
     }
     button:active {
         background: #aaa;
+    }
+
+    .coupon-code {
+        margin-bottom: 1rem;
     }
 
     .accordion {
@@ -80,10 +94,18 @@
       line-height: 1.8;
       border: 1px solid #aaa;
     }
+
     @media screen and (min-width: 768px) {
         /* 768px以上に適用されるCSS（PC用） */
         div.qr-code img {
             width: 650px;
+        }
+    }
+    @media screen and (max-width: 480px) {
+        /* 480px以下に適用されるCSS（SmartPhone用） */
+        .summaryHeading dt{
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
     }
 </style>
@@ -201,7 +223,7 @@
                 </button>
 
                 <div class="accordion-content">
-                    <h5 class="support-title">■ 子育て応援券アプリでのお支払いについて</h5>
+                    <h5 class="support-title">◆ 子育て応援券アプリでのお支払いについて</h5>
 
                     <ul class="support-list">
                         <li>1円（1ポイント）単位でお支払いいただけます。</li>
@@ -211,26 +233,29 @@
                             （当日を過ぎてしまった場合、当月内の決済であれば対応可能です。月末締めのためです。）
                         </li>
                         <li>
-                            当月のご利用分全額を応援券でお支払いいただいた場合は、請求書・利用明細の送付はいたしません。
-                        </li>
-                        <li>
-                            応援券アプリでの決済は、アプリを起動し、下記QRコードからお願いいたします。<br>
-                            （応援券アプリにつきましては、杉並区からご案内が届いているかと存じます）
+                            応援券アプリでの決済は、アプリを起動し、下記QRコードからお願いいたします。
                         </li>
                     </ul>
 
+                    <h5 class="support-title">◆ 決済コードでのお支払い</h4>
+
+                    <div class="support-text">
+                        下記QRコードの読み取りが難しい場合は、応援券アプリのトップ画面にある<br />
+                        「※QRコードが読み取れない場合はこちらから～」をタップしていただき、下記決済コードをご入力いただければお支払い画面に進めます。
+                        <div class="coupon-code">
+                            【決済コード】<br />
+                            28171875
+                        </div>
+                    </div>
+
                     <div class="qr-section">
-                        <h5 class="qr-title">■ QRコード</h4>
+                        <h5 class="qr-title">◆ QRコード</h4>
 
                         <div class="qr-box">
                             <!-- QRコード画像 -->
                             <div class="qr-code">
-                                <p><a target=_blank href="http://lin.ee/h0iYq2E">こちら</a>にアクセスするか、こちらのQRコードを読み込んでください。</p>
+                                <p><a target=_blank href="https://suginami-oenken.net/coupon/?e=864k1apb">こちら</a>にアクセスするか、QRコードを読み込んでください。</p>
                                 <img src="{{ asset('assets/img/common/qrcode.png', 'user_data') }}" alt="QRコード">
-                                <div class="company-name">（株）メディカルビジョン</div>
-                            </div>
-                            <div class="code">
-                                1 7 2 7 0 0 0
                             </div>
                         </div>
                     </div>
@@ -325,7 +350,14 @@
 #}
             </div>
             <div class="ec-orderRole__summary">
-
+                <div>
+                    <dl class="summaryHeading">
+                        <dt>＜ご利用料金の計算＞</dt>
+                        <dd>
+                            ※時間外（午前9時より早い時間、午後18時より遅い時間）は割増料金（1時間につきプラス200円）が発生しますので、お問い合わせください。
+                        </dd>
+                    </dl>
+                </div>
                 <div class="price-box ec-totalBox">
                     <!-- 1時間あたりの料金 -->
                     <dl class="ec-totalBox__spec">
