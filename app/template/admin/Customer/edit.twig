@@ -337,9 +337,11 @@ file that was distributed with this source code.
                     </div>
 
                     {% if Customer.id %}
+<!--
                         <div>
                             ▶︎▶︎ <a target=_blank href="{{ url('admin_invoice_new', { 'cid': Customer.id}) }}">請求書を登録する</a>
                         </div>
+-->
                         <div class="card rounded border-0 mb-4">
                             <div class="card-header">
                                 <div class="row">
@@ -360,7 +362,7 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="collapse show ec-cardCollapse" id="invoiceHistory">
-                                {% if Customer.Orders|length > 0 %}
+                                {% if Customer.Orders|length >= 0 %}
                                     <div class="card-body">
                                         <div class="row justify-content-between mb-2">
                                             <div class="col-6">
@@ -379,26 +381,57 @@ file that was distributed with this source code.
                                         </div>
                                         <table class="table table-striped table-sm">
                                             <thead class="table-active">
-                                            <th class="align-middle pt-2 pb-2 ps-3">{{ 'admin.order.order_date'|trans }}</th>
-                                            <th class="align-middle pt-2 pb-2">{{ 'admin.order.order_no'|trans }}</th>
-                                            <th class="align-middle pt-2 pb-2">{{ 'admin.order.purchase_price'|trans }}</th>
-                                            <th class="align-middle pt-2 pb-2 pe-3">{{ 'admin.order.order_status'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.issue_ym'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.customer'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.business.type'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.customer.payment_type'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.total'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.basic'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.overtime'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.advance'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.fare'|trans }}</th>
+                                            <th class="binvoice-top-0 pt-2 pb-2 text-center pr-3"></th>
                                             </thead>
                                             <tbody>
-                                            {% for Order in pagination %}
-                                                <tr>
-                                                    <td class="align-middle ps-3">{{ Order.order_date|date_min }}</td>
-                                                    <td class="align-middle">
-                                                        <a href="{{ url('admin_order_edit', { 'id' : Order.id }) }}">
-                                                            {{ Order.order_no }}
-                                                        </a>
-                                                    </td>
-                                                    <td class="align-middle">{{ Order.total|price }}</td>
-                                                    <td class="align-middle pe-3">
-                                                        <span class="badge badge-ec-blue" style="background-color: #fff; color: {{ Order.OrderStatusColor }}; border-color: {{ Order.OrderStatusColor }}">{{ Order.OrderStatus }}</span>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
+
+                                            <tr>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        2026年09月
+                                                                                    </td>
+                                                                                    <td class="align-middle text-left">
+                                                                                        <a class="action-edit" href="http://localhost:8022/admin/customer/1/edit">顧客テスト 管理者</a>
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        定期
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        クレカ
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        11000
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        10000
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        0
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        0
+                                                                                    </td>
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        1000
+                                                                                    </td>
+                                            <!--
+                                                                                    <td class="align-middle text-center" style="white-space:nowrap">
+                                                                                        <a class="action-edit" href="http://localhost:8022/admin/invoice/1/edit">確認する</a>
+                                                                                    </td>
+                                            -->
+                                                                                    <td class="align-middle text-center">
+                                                                                        <button class="action-edit issue_view" data-id="1"><i class="far fa-file-alt"></i></button>
+                                                                                    </td>
+                                                                                </tr>
+
                                             </tbody>
                                         </table>
                                         {% if pagination.totalItemCount > 0 %}
