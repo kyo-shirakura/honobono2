@@ -121,6 +121,8 @@
         var total = $('#amount_total').val();
         var tax = Math.round( total / (1+ 0.1) * 0.1);
 
+total = 11000;
+tax = 909;
         $('#amount_total_view').text( Number(total).toLocaleString() );
         // 内税
         $('#amount_tax_view').text( Number(tax).toLocaleString() );
@@ -176,7 +178,7 @@
                 <!-- 金額表示 -->
                 <div class="billing">
                     <div class="billing-box">
-                      御請求金額（9月分）<br>
+                      御請求金額（8月分）<br>
                       ¥<span id='amount_total_view'></span>円
                       <small>内、消費税額10%（¥<span id='amount_tax_view'></span>）</small>
                     </div>
@@ -256,6 +258,112 @@
                     </tr>
                   </thead>
                   <tbody>
+
+                  <tr>
+                    <td>1</td>
+                    <td>8/1(日)</td>
+                    <td class='align-center'>
+                        1:00
+                        <br>
+                        10:00〜11:00
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                      テストスタッフ
+                    </td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>200円</td>
+                    <td class='align-right'>2,200円</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>8/8(日)</td>
+                    <td class='align-center'>
+                    1:00
+                        <br>
+                        10:00〜11:00
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                      テストスタッフ
+                    </td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>200円</td>
+                    <td class='align-right'>2,200円</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>8/15(日)</td>
+                    <td class='align-center'>
+                    1:00
+                        <br>
+                        10:00〜11:00
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                      テストスタッフ
+                    </td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>200円</td>
+                    <td class='align-right'>2,200円</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>8/22(日)</td>
+                    <td class='align-center'>
+                    1:00
+                        <br>
+                        10:00〜11:00
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                      テストスタッフ
+                    </td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>200円</td>
+                    <td class='align-right'>2,200円</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>8/29(日)</td>
+                    <td class='align-center'>
+                    1:00
+                        <br>
+                        10:00〜11:00
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                      テストスタッフ
+                    </td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>-</td>
+                    <td class='align-right'>200円</td>
+                    <td class='align-right'>2,200円</td>
+                  </tr>
+
+
+
+
+
                   {% set total = 0 %}
                   {% set no = 1 %}
                   {% set Weekly = ['日','月','火','水','木','金','土'] %}
@@ -288,7 +396,7 @@
                   {% endfor %}
                     <tr>
                       <td colspan="9" style="text-align: right; font-weight: bold;">総合計（税込）</td>
-                      <td><strong>{{ total|format_number }}円</strong></td>
+                      <td><strong>11,00{{ total|format_number }}円</strong></td>
                     </tr>
                   </tbody>
                 </table>
