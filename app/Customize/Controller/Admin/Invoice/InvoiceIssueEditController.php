@@ -251,7 +251,7 @@ class InvoiceIssueEditController extends AbstractController
                'issue_ymd' => $issue_ymd,
                'InvoiceAddItems' => $InvoiceAddItems,
                'BusinessKinds' => BusinessConfig::BUSINESS_KIND,
-               'AdminReportFormToken' => $config['admin_report_form_token'],
+///               'AdminReportFormToken' => $config['admin_report_form_token'],
   //             'AdminReportFormToken' => 'ADMIN_REPORT_FORM_TOKEN',
            ];
        }
