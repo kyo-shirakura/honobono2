@@ -89,11 +89,81 @@ class ReportRepository extends AbstractRepository
     }
 
     /*
-     * 請求暑発行
+     * 請求暑発行（月毎に業務報告が発生した顧客リストを作成）
      * invoice_issued に存在しない
      * report に存在する
      */
      public function getQueryBuilderByIssueList($searchData)
+     {
+       $qb = $this->createQueryBuilder('r');
+
+       if (isset($searchData['working_ym'])) {
+           $working_ym_s = date(
+               'Y-m-d',
+               strtotime('first day of ' . $searchData['working_ym'])
+           );
+           $working_ym_e = date(
+               'Y-m-d',
+               strtotime('last day of ' . $searchData['working_ym'])
+           );
+
+           $qb
+               ->select([
+                   'IDENTITY(r.Customer) AS customer_id'
+                   ,'SUM(r.working_time_total) AS working_time_total_sum'
+                   ,'SUM(r.fare) AS fare_sum'
+               ])
+               ->leftJoin(
+                   'Customize\Entity\InvoiceIssued',
+                   'ii',
+                   'WITH',
+                   'ii.Customer = r.Customer
+                    AND ii.issue_ym >= :working_ym_s
+                    AND ii.issue_ym <= :working_ym_e'
+               )
+               ->where('ii.Customer IS NULL')
+               ->andWhere('r.working_day >= :working_ym_s')
+               ->andWhere('r.working_day <= :working_ym_e')
+               ->setParameter('working_ym_s', $working_ym_s)
+               ->setParameter('working_ym_e', $working_ym_e);
+       } else {
+           $qb
+               ->select([
+                   'IDENTITY(r.Customer) AS customer_id'
+                   ,'SUM(r.working_time_total) AS working_time_total_sum'
+                   ,'SUM(r.fare) AS fare_sum'
+               ])
+               ->leftJoin(
+                   'Customize\Entity\InvoiceIssued',
+                   'ii',
+                   'WITH',
+                   'ii.Customer = r.Customer'
+               )
+               ->where('ii.Customer IS NULL');
+       }
+
+       $qb
+           ->groupBy('r.Customer')
+           ->orderBy('r.Customer');
+
+//        echo $qb->getQuery()->getSQL();
+
+//$result = $qb->getQuery()->getResult();
+
+//dump($result);
+//die;
+
+//        exit;
+
+        return $this->queries->customize($this->getQueryKey(), $qb, $searchData);
+     }
+
+    /*
+     * 請求暑発行（月毎に業務報告が発生した顧客リストを作成）
+     * invoice_issued に存在しない
+     * report に存在する
+     */
+     public function getQueryBuilderByIssueList2($searchData)
      {
          $qb = $this->createQueryBuilder('r');
 
@@ -106,6 +176,8 @@ class ReportRepository extends AbstractRepository
              $qb
                  ->andWhere("r.working_day >= :working_ym_s")
                  ->andWhere("r.working_day <= :working_ym_e")
+//                 ->andWhere("ii.issue_ym >= :working_ym_s")
+//                 ->andWhere("ii.issue_ym <= :working_ym_e")
                  ->setParameter('working_ym_s', $working_ym_s)
                  ->setParameter('working_ym_e', $working_ym_e);
          }

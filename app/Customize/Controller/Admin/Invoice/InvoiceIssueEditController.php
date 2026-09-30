@@ -10,6 +10,7 @@ use Customize\Entity\Report;
 use Customize\Form\Type\Admin\InvoiceIssueType;
 use Customize\Form\Type\Admin\InvoiceIssueAddItemType;
 use Customize\Repository\Master\InvoiceAddItemsRepository;
+use Customize\Repository\BusinessPlanRepository;
 use Customize\Repository\BusinessStaffRepository;
 use Customize\Repository\InvoiceIssuedRepository;
 use Customize\Repository\InvoiceIssueAddItemRepository;
@@ -57,6 +58,11 @@ class InvoiceIssueEditController extends AbstractController
     protected $invoiceAddItemsRepository;
 
     /**
+     * @var BusinessPlanRepository
+     */
+    protected $businessPlanRepository;
+
+    /**
      * @var BusinessStaffRepository
      */
     protected $businessStaffRepository;
@@ -93,6 +99,7 @@ class InvoiceIssueEditController extends AbstractController
 
 
     public function __construct(
+        BusinessPlanRepository $businessPlanRepository,
         BusinessStaffRepository $businessStaffRepository,
         InvoiceIssuedRepository $invoiceIssuedRepository,
         InvoiceAddItemsRepository $invoiceAddItemsRepository,
@@ -105,6 +112,7 @@ class InvoiceIssueEditController extends AbstractController
         MailTemplateRepository $mailTemplateRepository,
         ValidatorInterface $validator
     ) {
+        $this->businessPlanRepository = $businessPlanRepository;
         $this->businessStaffRepository = $businessStaffRepository;
         $this->invoiceIssuedRepository = $invoiceIssuedRepository;
         $this->invoiceAddItemsRepository = $invoiceAddItemsRepository;
@@ -212,29 +220,40 @@ class InvoiceIssueEditController extends AbstractController
        */
        public function view(Request $request, $id = null, $issue_ym = null)
        {
-           if( $issue_ym == null ) $issue_ym = date('Y-m', strtotime('-1 month'));
-           $issue_ymd = $issue_ym. '-04';
+           if (is_null($id)) {
+             throw new NotFoundHttpException();
+           }
 
            $config = $this->eccubeConfig;
            $Invoice = new InvoiceIssueAddItem();
-           if ($id) {
-               $Customer = $this->customerRepository->find($id);
-               if (is_null($Customer)) {
-                   throw new NotFoundHttpException();
-               }
-               $BusinessStaff = $this->businessStaffRepository->getBusinessStaffByThisMonth([
-                       'Customer' => $Customer,
-                       'working_ym' => $issue_ym,
-               ]);
-               $Report = $this->reportRepository->getMonthlyReportByCustomer([
-                       'Customer' => $Customer,
-                       'working_ym' => $issue_ym,
-               ]);
 
-           }else{
-               $BusinessStaff = new BusinessStaff();
-               $Report = new Report();
+           $InvoiceIssud = $this->invoiceIssuedRepository->find($id);
+
+           $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer());
+           if (is_null($Customer)) {
+               throw new NotFoundHttpException();
            }
+
+           if( $issue_ym == null ){
+             // 基本料金を取得
+             $BusinessPlan = $this->businessPlanRepository->getActivePlan([
+                 'contractor_id' => $InvoiceIssud->getBusiness()->getContractorId()   // 契約対象(法人/個人)
+                 ,'kind_id' => $InvoiceIssud->getBusiness()->getKindId() // 契約種類(定期/単発)
+             ]);
+
+             $issue_ym = date('Y-m', strtotime('+1 month'));
+             $issue_ymd = $issue_ym. '-'. $BusinessPlan->getTransferDate();
+           }
+
+           $BusinessStaff = $this->businessStaffRepository->getBusinessStaffByThisMonth([
+                   'Customer' => $Customer,
+                   'working_ym' => $issue_ym,
+           ]);
+           $Report = $this->reportRepository->getMonthlyReportByCustomer([
+                   'Customer' => $Customer,
+                   'working_ym' => $issue_ym,
+           ]);
+
            //
            $builder = $this->formFactory
                ->createBuilder(InvoiceIssueType::class, $Invoice);
