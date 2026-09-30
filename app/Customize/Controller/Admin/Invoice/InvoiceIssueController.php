@@ -93,7 +93,7 @@ class InvoiceIssueController extends AbstractController
          $searchForm = $builder->getForm();
          $firstAccess = 0;
          // 顧客一覧の取得
-         $Customers = $this->customerRepository->findAll();
+//         $Customers = $this->customerRepository->findAll();
          $searchCustomerID = '';
 
          /**
@@ -154,7 +154,7 @@ class InvoiceIssueController extends AbstractController
                      'page_count' => $page_count,
                      'has_errors' => true,
                      'firstAccess' => 1,
-                     'Customers' => $Customers,
+//                     'Customers' => $Customers,
                      'searchCustomerID' => $searchCustomerID
                  ];
              }
@@ -195,12 +195,20 @@ class InvoiceIssueController extends AbstractController
          $searchData['working_ym'] = date('Y-m', strtotime('-1 month'));
          $searchData['issue_status'] = 'NULL';
 
-$searchData['working_ym'] = date('Y-m', strtotime('-13 month'));
-echo '<br>working_ym: '. $searchData['working_ym'];
+//$searchData['working_ym'] = date('Y-m', strtotime('-13 month'));
+//echo '<br><br><br>*********************************** working_ym: '. $searchData['working_ym'];
 //         $searchData = null;
          $qb = $this->reportRepository->getQueryBuilderByIssueList($searchData);
 //         $qb = $this->reportRepository->getQueryBuilderBySearchData($searchData);
 //        $qb = $this->reportRepository->getQueryBuilderByIssueData($searchData);
+
+//echo '<br><br>';
+//echo $qb->getQuery()->getSQL();
+
+$result = $qb->getQuery()->getResult();
+
+dump($result);
+//die;
 
          $event = new EventArgs(
              [
@@ -225,7 +233,7 @@ echo '<br>working_ym: '. $searchData['working_ym'];
              'page_count' => $page_count,
              'has_errors' => false,
              'firstAccess' => $firstAccess,
-             'Customers' => $Customers,
+//             'Customers' => $Customers,
              'searchCustomerID' => $searchCustomerID,
              'BusinessKind' => BusinessConfig::BUSINESS_KIND,
              'PaymentType' => BusinessConfig::BUSINESS_PAYMENT,

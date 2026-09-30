@@ -79,7 +79,6 @@ file that was distributed with this source code.
                                         <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.issue_ym'|trans }}</th>
 #}
                                         <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.customer'|trans }}</th>
-                                        <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.business.type'|trans }}</th>
                                         <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.customer.payment_type'|trans }}</th>
                                         <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.total'|trans }}</th>
                                         <th class="binvoice-top-0 pt-2 pb-2 text-center">{{ 'admin.invoice.detail.amout.basic'|trans }}</th>
@@ -91,37 +90,34 @@ file that was distributed with this source code.
                                 </thead>
                                 <tbody>
                                 {% for invoice in pagination %}
-                                    <tr>
-{#
-                                        <td class="align-middle text-center">
-                                            {{ invoice.working_day }}
-                                        </td>
-#}
-                                        <td class="align-middle text-left left20">
-                                            <a class="action-edit" href="{{ url('admin_customer_edit', { id : invoice.Customer.id }) }}">{{ invoice.Customer.name01 }} {{ invoice.Customer.name02 }}</a>
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                            {% if invoice.Business.kind_id %}{{ BusinessKind[invoice.Business.kind_id] }}{% endif %}
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                            {% if invoice.Customer.payment_type %}{{ PaymentType[invoice.Customer.payment_type] }}{% endif %}
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                        </td>
-                                        <td class="align-middle text-center" style="white-space:nowrap">
-                                        </td>
-                                        <td class="align-middle text-center">
-{#
-                                            <a class="action-edit" href="{{ url('admin_invoice_issue_do', { id : invoice.Customer.id }) }}">{{ 'admin.invoice.issue.do'|trans }}</a>
-#}
-                                            <a class="action-edit" href="{{ url('admin_invoice_issue_edit', { id : invoice.Customer.id }) }}">{{ 'admin.invoice.issue.do'|trans }}</a>
+<!--
+{{ dump(invoice) }}
+<hr>**
+-->
 
+                                    {% set Customer = repository('Eccube\\Entity\\Customer').find( invoice.customer_id ) %}
+                                    <tr>
+                                        <td class="align-middle text-left left20">
+                                            <a class="action-edit" href="{{ url('admin_customer_edit', { id : Customer.id }) }}">{{ Customer.name01 }} {{ Customer.name02 }}</a>
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                            {% if Customer.payment_type %}{{ PaymentType[Customer.payment_type] }}{% endif %}
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap"> {{ invoice.working_time_total_sum }}
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">0
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap">0
+                                        </td>
+                                        <td class="align-middle text-center" style="white-space:nowrap"> {{ invoice.fare_sum }}
+                                        </td>
+                                        <td class="align-middle text-center">
+{#
+                                            <a class="action-edit" href="{{ url('admin_invoice_issue_do', { id : Customer.id }) }}">{{ 'admin.invoice.issue.do'|trans }}</a>
+#}
+                                            <a class="action-edit" href="{{ url('admin_invoice_issue_edit', { id : Customer.id }) }}">{{ 'admin.invoice.issue.do'|trans }}</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
