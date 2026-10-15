@@ -63,6 +63,13 @@
     <script>
         // 業務報告
         $(function() {
+            // キャッシュからの復元（戻るボタンでの遷移）の場合にリロードする
+            $(window).on('pageshow', function(event) {
+                if (event.originalEvent && event.originalEvent.persisted) {
+                    window.location.reload();
+                }
+            });
+
             $('#working_time_total_disp').text('0:00');
             // 合計時間を算出
             $('#working_time_start_hour').on('change', function() {

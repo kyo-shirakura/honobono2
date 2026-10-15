@@ -164,11 +164,9 @@ file that was distributed with this source code.
                                         <td class="align-middle text-center" style="white-space:nowrap">
                                             {{ invoice.amount_fare }}
                                         </td>
-<!--
                                         <td class="align-middle text-center" style="white-space:nowrap">
-                                            <a class="action-edit" href="{{ url('admin_invoice_edit', { id : invoice.id }) }}">確認する</a>
+                                            <a class="action-edit" href="{{ url('admin_invoice_issue_edit', { id : invoice.id }) }}">修正</a>
                                         </td>
--->
                                         <td class="align-middle text-center">
                                             <button class="action-edit issue_view" data-id="{{ invoice.Customer.id }}"><i class="far fa-file-alt"></i></button>
                                         </td>

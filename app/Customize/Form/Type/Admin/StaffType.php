@@ -172,6 +172,7 @@ class StaffType extends AbstractType
               ],
           ])
           // ソート用
+/*
           ->add('sortkey', HiddenType::class, [
               'label' => 'admin.list.sort.key',
               'required' => false,
@@ -180,6 +181,7 @@ class StaffType extends AbstractType
               'label' => 'admin.list.sort.type',
               'required' => false,
           ])
+*/
       ;
   }
 

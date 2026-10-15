@@ -146,9 +146,12 @@ class StaffReportType extends AbstractType
                 'query_builder' => function (EntityRepository $er) use ($staff_id) {
                     $Staff = $this->staffRepository->find($staff_id);
                     return $er->createQueryBuilder('b')
-                        ->orderBy('b.id', 'ASC')
-                        ->where('b.Staff = :Staff')
+                        ->leftJoin('Customize\Entity\BusinessStaff', 'bs', 'WITH', 'bs.Business = b.id')
+                        ->where('bs.Staff = :Staff')
+                        ->andWhere('bs.Status = 3')
                         ->andWhere('b.Status = 3 OR b.Status = 4')
+                        ->orderBy('b.id', 'ASC')
+                        ->groupBy('b.id')
                         ->setParameter('Staff', $Staff);
                 },
                 'eccube_form_options' => [

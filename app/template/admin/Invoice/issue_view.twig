@@ -2,6 +2,8 @@
 請求書（印刷用）
 #}
 
+<link rel="stylesheet" href="/html/template/admin/assets/css/bootstrap.css">
+
 {% block stylesheet %}
 <style type="text/css">
     body {
@@ -98,7 +100,7 @@
 
     .corp-info {
         font-size: 13px;
-        margin-left: 460px;
+        margin-left: 470px;
     }
 
     .billing {
@@ -109,6 +111,30 @@
         margin-left: 50px;
     }
 
+    .c-conversionArea__container{
+        height: 100%;
+    }
+    .align-items-center {
+        height: 100%;
+        align-items: center !important;
+    }
+    .justify-content-end {
+        justify-content: flex-end !important;
+    }
+    .col-auto {
+        flex: 0 0 auto;
+        width: auto;
+    }
+    .c-conversionArea {
+        width: 100%;
+        height: 60px;
+        background: rgba(47, 63, 78, 0.8);
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        text-align: right;
+        z-index: 100;
+    }
 </style>
 {% endblock stylesheet %}
 
@@ -119,17 +145,27 @@
   crossorigin="anonymous"></script>
 
 <script>
+$(function() {
     // 合計金額
-    $(document).ready(function() {
-        var total = $('#amount_total').val();
-        var tax = Math.round( total / (1+ 0.1) * 0.1);
+    var total = $('#amount_total').val();
+    var tax = Math.round(Number(total) / 1.1 * 0.1);
 
-total = 11000;
-tax = 909;
-        $('#amount_total_view').text( Number(total).toLocaleString() );
-        // 内税
-        $('#amount_tax_view').text( Number(tax).toLocaleString() );
+    $('#amount_total_view').text(Number(total).toLocaleString());
+    $('#amount_tax_view').text(Number(tax).toLocaleString());
+
+    // 発行ボタン
+    $(document).on('click', '#issue_go', function(e) {
+        e.preventDefault();
+
+        alert('クリックイベントが実行されました');
+
+        if (!confirm('請求書を発行してもよろしいですか？')) {
+            return false;
+        }
+
+        $('#issue_form').trigger('submit');
     });
+});
 </script>
 {% endblock javascript %}
 
@@ -252,6 +288,7 @@ tax = 909;
                     <tr>
                       <th>NO</th>
                       <th>日付</th>
+                      <th>料金体系</th>
                       <th>合計作業時間</th>
                       <th>時間外</th>
                       <th>担当スタッフ</th>
@@ -264,111 +301,6 @@ tax = 909;
                   </thead>
                   <tbody>
 
-                  <tr>
-                    <td>1</td>
-                    <td>8/1(日)</td>
-                    <td class='align-center'>
-                        1:00
-                        <br>
-                        10:00〜11:00
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                      テストスタッフ
-                    </td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>200円</td>
-                    <td class='align-right'>2,200円</td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>8/8(日)</td>
-                    <td class='align-center'>
-                    1:00
-                        <br>
-                        10:00〜11:00
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                      テストスタッフ
-                    </td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>200円</td>
-                    <td class='align-right'>2,200円</td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>8/15(日)</td>
-                    <td class='align-center'>
-                    1:00
-                        <br>
-                        10:00〜11:00
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                      テストスタッフ
-                    </td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>200円</td>
-                    <td class='align-right'>2,200円</td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>8/22(日)</td>
-                    <td class='align-center'>
-                    1:00
-                        <br>
-                        10:00〜11:00
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                      テストスタッフ
-                    </td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>200円</td>
-                    <td class='align-right'>2,200円</td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>8/29(日)</td>
-                    <td class='align-center'>
-                    1:00
-                        <br>
-                        10:00〜11:00
-                    </td>
-                    <td>
-                        0
-                    </td>
-                    <td>
-                      テストスタッフ
-                    </td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>-</td>
-                    <td class='align-right'>200円</td>
-                    <td class='align-right'>2,200円</td>
-                  </tr>
-
-
-
-
-
                   {% set total = 0 %}
                   {% set no = 1 %}
                   {% set Weekly = ['日','月','火','水','木','金','土'] %}
@@ -380,6 +312,10 @@ tax = 909;
                       <tr>
                         <td>{{ no }}</td>
                         <td>{{ row.working_day | date('m/d') }}({{ Weekly[weekday_no] }})</td>
+                        <td>
+                        {{ BusinessPlan.kind_id is empty ? '...' : BusinessKinds[BusinessPlan.kind_id] }}
+                        <br>orキャンセルは背景グレー
+                        </td>
                         <td class='align-center'>
                             {{ result.working.total }}
                             <br>
@@ -389,7 +325,7 @@ tax = 909;
                             {{ result.working.overtime }}
                         </td>
                         <td>
-                          {{ row.Staff.name01 }} {{ row.Staff.name02 }}
+                          {{ row.Staff.name01 }}
                         </td>
                         <td class='align-right'>{{ result.amout.basic is empty ? '-' : result.amout.basic|format_number ~ '円' }}</td>
                         <td class='align-right'>{{ result.amout.overtime is empty ? '-' : result.amout.overtime|format_number ~ '円' }}</td>
@@ -401,7 +337,7 @@ tax = 909;
                   {% endfor %}
                     <tr>
                       <td colspan="9" style="text-align: right; font-weight: bold;">総合計（税込）</td>
-                      <td><strong>11,00{{ total|format_number }}円</strong></td>
+                      <td><strong>{{ total|format_number }}円</strong></td>
                     </tr>
                   </tbody>
                 </table>
@@ -432,6 +368,20 @@ tax = 909;
 
                 </div>
 
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-11">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button id="issue_go" class="btn btn-ec-conversion px-5" type="submit">{{ 'admin.common.issue'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

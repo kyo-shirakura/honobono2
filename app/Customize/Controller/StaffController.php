@@ -9,6 +9,7 @@ use Customize\Form\Type\Front\StaffLoginType;
 use Customize\Form\Type\Front\StaffReportType;
 use Customize\Repository\StaffRepository;
 use Customize\Repository\BusinessRepository;
+use Customize\Repository\BusinessStaffRepository;
 use Customize\Repository\ReportRepository;
 use Customize\Repository\Master\SafetyConfirmationRepository;
 use Customize\Repository\Master\WorkDetailsRepository;
@@ -51,6 +52,11 @@ class StaffController extends AbstractController
      * @var BusinessRepository
      */
     protected $businessRepository;
+
+    /**
+     * @var BusinessStaffRepository
+     */
+    protected $businessStaffRepository;
 
     /**
      * @var CustomerRepository
@@ -114,6 +120,7 @@ class StaffController extends AbstractController
     public function __construct(
         AuthenticationUtils $authenticationUtils,
         BusinessRepository $businessRepository,
+        BusinessStaffRepository $businessStaffRepository,
         CustomerRepository $customerRepository,
         StaffRepository $staffRepository,
         SafetyConfirmationRepository $safetyConfirmationRepository,
@@ -128,6 +135,7 @@ class StaffController extends AbstractController
     {
         $this->authenticationUtils = $authenticationUtils;
         $this->businessRepository = $businessRepository;
+        $this->businessStaffRepository = $businessStaffRepository;
         $this->customerRepository = $customerRepository;
         $this->staffRepository = $staffRepository;
         $this->safetyConfirmationRepository = $safetyConfirmationRepository;
@@ -308,11 +316,14 @@ class StaffController extends AbstractController
         $staff_id = $this->session->get('eccube.front.mypage.staff.id', null);
 
         $Staff = $this->staffRepository->find($staff_id);
+
         // 案件情報取得
-        $Business = $this->businessRepository->findBy( array( 'Staff' => $Staff , 'Status' => array(3,4) ), ['id' => 'DESC']);
+        $BusinessStaff = $this->businessStaffRepository->findOneBy( array( 'Staff' => $Staff , 'Status' => array(3) ), ['id' => 'DESC']);
+//$Business = $this->businessRepository->findBy( array( 'Business' => $BusinessStaff->getBusiness()->getId() , 'Status' => array(3,4) ), ['id' => 'DESC']);
+//$Business = $this->businessRepository->find($BusinessStaff->getBusiness()->getId());
 
         // 案件登録がなければ終了
-        if ( !$Business ) {
+        if ( !$BusinessStaff ) {
             return $this->render("Staff/no_contract.twig", [
                 'Staff' => $Staff,
             ]);
@@ -377,55 +388,81 @@ class StaffController extends AbstractController
         $working_time_start = sprintf( '%02d:%02d', $_POST["working_time_start_hour"], $_POST["working_time_start_minute"] );
         $working_time_end = sprintf( '%02d:%02d', $_POST["working_time_end_hour"], $_POST["working_time_end_minute"] );
 
-        $Report->setBusiness( $Business );
-        $Report->setCustomer( $Customer );
-        $Report->setStaff( $Staff );
+        // 重複登録防止チェック
+        $ReportExist = $this->reportRepository->findBy( array( 'Staff' => $staff_id
+                                                            , 'Business' => $business_id
+                                                            , 'Customer' => $Business->getCustomer()->getId()
+                                                            , 'working_day' => $_POST["working_day"]
+                                                            , 'working_time_start' => $working_time_start
+                                                            , 'working_time_end' => $working_time_end
+                                                            , 'remark' => $_POST["remark"]
+                                                     ) );
+        // スタッフ/顧客/契約ID/稼働日/開始時間-終了時間/備考すべて同じデータがなければ登録
+        if( count($ReportExist) < 1 ){
+            $Report->setBusiness( $Business );
+            $Report->setCustomer( $Customer );
+            $Report->setStaff( $Staff );
 
-        if( isset( $_POST["working_day"] ) ){
-            $Report->setWorkingDay( $_POST["working_day"] );
-        }
-        $Report->setWorkingTimeStart( $working_time_start );
-        $Report->setWorkingTimeEnd( $working_time_end );
-        $Report->setWorkingTimeBreak( $_POST["working_time_break"] );
-        $Report->setWorkingTimeTotal( $_POST["working_time_total"] );
-        if( isset( $_POST["work_other_check"] ) ){
-            $Report->setWorkOtherCheck( 1 );
-        }
-        $Report->setWorkOtherText( $_POST["work_other_text"] );
-        $work_details = array();
-        if( isset( $_POST["work_details"] ) ){
-            $Report->setWorkDetails( $this->conv_encode( $_POST["work_details"] ) );
-            foreach( $WorkDetails as $row ) {
-                if( array_search( $row->getId(), $_POST["work_details"] ) !== false ){
-                    $work_details[] = $row->getName();
+            if( isset( $_POST["working_day"] ) ){
+                $Report->setWorkingDay( $_POST["working_day"] );
+            }
+            $Report->setWorkingTimeStart( $working_time_start );
+            $Report->setWorkingTimeEnd( $working_time_end );
+            $Report->setWorkingTimeBreak( $_POST["working_time_break"] );
+            $Report->setWorkingTimeTotal( $_POST["working_time_total"] );
+            if( isset( $_POST["work_other_check"] ) ){
+                $Report->setWorkOtherCheck( 1 );
+            }
+            $Report->setWorkOtherText( $_POST["work_other_text"] );
+            $work_details = array();
+            if( isset( $_POST["work_details"] ) ){
+                $Report->setWorkDetails( $this->conv_encode( $_POST["work_details"] ) );
+                foreach( $WorkDetails as $row ) {
+                    if( array_search( $row->getId(), $_POST["work_details"] ) !== false ){
+                        $work_details[] = $row->getName();
+                    }
                 }
             }
-        }
-        $safety_confirmation = array();
-        if( isset( $_POST["safety_confirmation"] ) ){
-            $Report->setSafetyConfirmation( $this->conv_encode( $_POST["safety_confirmation"] ) );
-            foreach( $SafetyConfirmation as $row ) {
-                if( array_search( $row->getId(), $_POST["safety_confirmation"] ) !== false ){
-                    $safety_confirmation[] = $row->getName();
+            $safety_confirmation = array();
+            if( isset( $_POST["safety_confirmation"] ) ){
+                $Report->setSafetyConfirmation( $this->conv_encode( $_POST["safety_confirmation"] ) );
+                foreach( $SafetyConfirmation as $row ) {
+                    if( array_search( $row->getId(), $_POST["safety_confirmation"] ) !== false ){
+                        $safety_confirmation[] = $row->getName();
+                    }
                 }
             }
-        }
-        $Report->setPaymentAdvance( $_POST["payment_advance"] );
-        if( $filename !== null ){
-            $Report->setPaymentReceipt( $filename );
-        }
-        $Report->setRemark( $_POST["remark"] );
+            $Report->setPaymentAdvance( $_POST["payment_advance"] );
+            if( $filename !== null ){
+                $Report->setPaymentReceipt( $filename );
+            }
+            $Report->setRemark( $_POST["remark"] );
 
-        $this->entityManager->persist($Report);
-        $this->entityManager->flush();
+            $this->entityManager->persist($Report);
+            $this->entityManager->flush();
 
-        // メール送信
-        $this->mailService->sendStaffReportCompleteMail( $Report, $Customer, $Staff, $work_details, $safety_confirmation );
+            // メール送信
+            $this->mailService->sendStaffReportCompleteMail( $Report, $Customer, $Staff, $work_details, $safety_confirmation );
+        }
+
+        // thanksに遷移（重複登録防止）
+        return $this->redirectToRoute('staff_report_thanks');
 
         return [
             'error' => $utils->getLastAuthenticationError(),
             'form' => $form->createView(),
         ];
+    }
+
+    /**
+     * 業務報告Thanks.
+     *
+     * @Route("/staff/report_thanks", name="staff_report_thanks", methods={"GET", "POST"})
+     * @Template("Staff/report_thanks.twig")
+     */
+    public function thanks(Request $request, AuthenticationUtils $utils)
+    {
+        return [];
     }
 
     /**
