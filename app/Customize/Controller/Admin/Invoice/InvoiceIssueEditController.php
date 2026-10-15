@@ -161,17 +161,23 @@ class InvoiceIssueEditController extends AbstractController
 
          $InvoiceIssud = $this->invoiceIssuedRepository->find($id);
 
-         $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer()->getId());
+         $Customer = $this->customerRepository->find($id);
          if (is_null($Customer)) {
              throw new NotFoundHttpException();
          }
 
          if( $issue_ym == null ){
            // 基本料金を取得
+/*
            $BusinessPlan = $this->businessPlanRepository->getActivePlan([
                'contractor_id' => $InvoiceIssud->getBusiness()->getContractorId()   // 契約対象(法人/個人)
                ,'kind_id' => $InvoiceIssud->getBusiness()->getKindId() // 契約種類(定期/単発)
            ]);
+*/
+$BusinessPlan = $this->businessPlanRepository->getActivePlan([
+    2   // 契約対象(法人/個人)
+    ,1 // 契約種類(定期/単発)
+]);
 
            $working_ym = date('Y-m', strtotime('-1 month'));
            $issue_ym = date('Y-m', strtotime('+1 month'));
