@@ -161,7 +161,7 @@ class InvoiceIssueEditController extends AbstractController
 
          $InvoiceIssud = $this->invoiceIssuedRepository->find($id);
 
-         $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer());
+         $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer()->getId());
          if (is_null($Customer)) {
              throw new NotFoundHttpException();
          }
@@ -414,7 +414,7 @@ class InvoiceIssueEditController extends AbstractController
 
            $InvoiceIssud = $this->invoiceIssuedRepository->find($id);
 
-           $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer());
+           $Customer = $this->customerRepository->find($InvoiceIssud->getCustomer()->getId());
            if (is_null($Customer)) {
                throw new NotFoundHttpException();
            }
