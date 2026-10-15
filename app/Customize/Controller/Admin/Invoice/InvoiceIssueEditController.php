@@ -174,7 +174,7 @@ class InvoiceIssueEditController extends AbstractController
                ,'kind_id' => $InvoiceIssud->getBusiness()->getKindId() // 契約種類(定期/単発)
            ]);
 */
-$BusinessPlan = $this->businessPlanRepository-->find(5);
+$BusinessPlan = $this->businessPlanRepository->find(5);
 
 
 
