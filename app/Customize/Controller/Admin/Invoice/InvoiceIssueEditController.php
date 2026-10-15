@@ -174,10 +174,9 @@ class InvoiceIssueEditController extends AbstractController
                ,'kind_id' => $InvoiceIssud->getBusiness()->getKindId() // 契約種類(定期/単発)
            ]);
 */
-$BusinessPlan = $this->businessPlanRepository->getActivePlan([
-    2   // 契約対象(法人/個人)
-    ,1 // 契約種類(定期/単発)
-]);
+$BusinessPlan = $this->businessPlanRepository-->find(5);
+
+
 
            $working_ym = date('Y-m', strtotime('-1 month'));
            $issue_ym = date('Y-m', strtotime('+1 month'));
