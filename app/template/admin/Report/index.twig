@@ -18,14 +18,12 @@ file that was distributed with this source code.
 
 {% block stylesheet %}
     <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css', 'admin') }}">
 
     <style type="text/css">
         .datepicker-days th.dow:first-child,
         .datepicker-days td:first-child {
             color: #f00;
         }
-
         .datepicker-days th.dow:last-child,
         .datepicker-days td:last-child {
             color: #00f;
@@ -49,10 +47,6 @@ file that was distributed with this source code.
 {% block javascript %}
     <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
 
-    <!-- select2 -->
-    <script src="/html/template/admin/assets/js/jquery-3.5.1.js"></script>
-    <script src="/html/template/admin/assets/js/select2.min.js"></script>
-
     <script>
         $(function() {
             $('.js-listSort').on('click', function() {
@@ -60,8 +54,6 @@ file that was distributed with this source code.
             });
         });
 
-        // スタッフ名のサジェスト化
-        $('#admin_search_report_Staff').select2();
     </script>
 
 {% endblock javascript %}

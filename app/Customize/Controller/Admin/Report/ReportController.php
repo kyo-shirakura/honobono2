@@ -5,6 +5,7 @@ use Eccube\Common\Constant;
 use Eccube\Controller\AbstractController;
 use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
+use Eccube\Repository\CustomerRepository;
 use Eccube\Repository\Master\PageMaxRepository;
 use Eccube\Service\MailService;
 use Eccube\Service\PurchaseFlow\PurchaseFlow;
@@ -40,6 +41,11 @@ class ReportController extends AbstractController
     protected $pageMaxRepository;
 
     /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
      * @var ReportRepository
      */
     protected $reportRepository;
@@ -57,17 +63,20 @@ class ReportController extends AbstractController
     /**
      * constructor.
      *
+     * @param CustomerRepository $customerRepository
      * @param PurchaseFlow $orderPurchaseFlow
      * @param PageMaxRepository $pageMaxRepository
      * @param ReportRepository $reportRepository
      * @param ValidatorInterface $validator
      */
     public function __construct(
+        CustomerRepository $customerRepository,
         PurchaseFlow $orderPurchaseFlow,
         PageMaxRepository $pageMaxRepository,
         ReportRepository $reportRepository,
         ValidatorInterface $validator
     ) {
+        $this->customerRepository = $customerRepository;
         $this->purchaseFlow = $orderPurchaseFlow;
         $this->pageMaxRepository = $pageMaxRepository;
         $this->reportRepository = $reportRepository;
@@ -111,11 +120,10 @@ class ReportController extends AbstractController
           }
 
           if ('POST' === $request->getMethod()) {
-//echo '<br>1';
               $searchForm->handleRequest($request);
               $searchData = $searchForm->getData();
 
-              if ($searchForm->isValid()) {
+              if ($searchForm->isSubmitted() && $searchForm->isValid()) {
                   /**
                    * 検索が実行された場合は, セッションに検索条件を保存する.
                    * ページ番号は最初のページ番号に初期化する.
@@ -126,6 +134,34 @@ class ReportController extends AbstractController
                   // 検索条件, ページ番号をセッションに保持.
                   $this->session->set('eccube.admin.report.search', FormUtil::getViewData($searchForm));
                   $this->session->set('eccube.admin.report.search.page_no', $page_no);
+              } elseif ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'linksearch' ) {
+                  // ダイレクトリンクの場合
+                  $page_no = 1;
+                  $viewData = [];
+                  $firstAccess = 1;
+
+                  if ($statusId = (int) $request->get('order_status_id')) {
+                      $viewData = ['status' => $statusId];
+                  }
+
+                  $searchData = $searchForm->getData();
+
+                  // 件数が多いので初期設定
+                  $searchData['status'] = array('on');
+                  $searchData['job_pref'] = null;
+
+                  $last_modified_date = new \DateTime();
+                  $last_modified_date->modify('-7 day');
+                  $searchData['last_modified_date'] = $last_modified_date->format('Y-m-d');
+
+                  if( isset($_REQUEST['cid']) && !empty($_REQUEST['cid']) ){
+                    $searchData['Customer'] = $this->customerRepository->find($_REQUEST['cid']);
+                  }
+                  if( isset($_REQUEST['tym']) && !empty($_REQUEST['tym']) ){
+                    $tym = new \DateTime($_REQUEST['tym']);
+                    $searchData['working_ym'] = $tym;
+                  }
+
               } else {
                   // 検索エラーの際は, 詳細検索枠を開いてエラー表示する.
                   return [
@@ -195,6 +231,11 @@ class ReportController extends AbstractController
               $page_no,
               $page_count
           );
+
+          if ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'linksearch' ) {
+            $tym->modify('-1 month');
+            $searchData['working_ym'] = $tym;
+          }
 
           return [
               'searchForm' => $searchForm->createView(),

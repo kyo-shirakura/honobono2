@@ -89,15 +89,20 @@ file that was distributed with this source code.
 
                             <div class="mb-3">
                                 <label class="col-form-label fw-bold">{{ 'admin.common.mark'|trans }} {{ 'admin.invoice.reports'|trans }}</label>
+<!--
                                 <form target='_blank' name="report_view_form" id="report_view_form" method="POST" action="{{ url('admin_report') }}">
+{#
                                     <input type="hidden" id="admin_search_report__token" name="admin_search_report[_token]" value="{{ AdminReportFormToken }}">
-                                    <input type='hidden' name='admin_search_report[Customer]' id='admin_search_report_Customer' value='1' />
-                                    <input type='hidden' name='admin_search_report[working_ym]' id='admin_search_report_working_ym' value='{{ 'now'|date_modify('-1 month')|date('Y-m') }}' />
+#}
+                                    <input type='hidden' name='mode' id='mode' value='linksearch' />
+                                    <input type='hidden' name='cid' id='cid' value='{{ Customer.id }}' />
+                                    <input type='hidden' name='tym' id='tym' value='{{ 'now'|date_modify('-1 month')|date('Y-m-01') }}' />
                                     <button class="btn btn-ec-conversion px-5 ladda-button" type="submit" id="search_submit" data-style="expand-right">
                                         <span class="ladda-label">{{ 'admin.invoice.report.link'|trans }}</span>
                                         <span class="ladda-spinner"></span>
                                     </button>
                                 </form>
+-->
                                 <table class="table table-sm" id="search_result">
                                     <thead>
                                         <tr>
@@ -174,7 +179,7 @@ file that was distributed with this source code.
                                 </table>
                             </div>
 
-                            <form name="issue_form" id="issue_form" method="POST" action="{{ url('admin_invoice_issue_issued', { id : Customer.id }) }}">
+                            <form name="issue_form" id="issue_form" method="POST" action="{{ url('admin_invoice_issue_complete', { id : Customer.id }) }}">
                                 <input type='hidden' id='mode' value='issue' />
                                 <!-- ◆ 追加明細 -->
                                 <div class="mb-3">
