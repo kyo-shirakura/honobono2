@@ -176,6 +176,8 @@ class InvoiceIssueEditController extends AbstractController
 */
 $BusinessPlan = $this->businessPlanRepository-->find(5);
 
+
+
            $working_ym = date('Y-m', strtotime('-1 month'));
            $issue_ym = date('Y-m', strtotime('+1 month'));
            $issue_ymd = $issue_ym. '-'. $BusinessPlan->getTransferDate();
